@@ -108,7 +108,7 @@ public:
         return res;
     }
 
-    Matrix& eval_bin_op(const Matrix &other, float (*op)(float, float)) {
+    Matrix eval_bin_op(const Matrix &other, float (*op)(float, float)) {
         Matrix *res = new Matrix<W, H>();
 
         for (size_t row = 0; row < H; row++) {
@@ -118,5 +118,17 @@ public:
         }
 
         return *res;
+    }
+
+    Matrix operator+(const Matrix &other) {
+        return this->eval_bin_op(other, [](float a, float b){return a + b});
+    }
+
+    Matrix operator-(const Matrix &other) {
+        return this->eval_bin_op(other, [](float a, float b){return a - b});
+    }
+
+    Matrix operator*(const Matrix &other) {
+        return this->eval_bin_op(other, [](float a, float b){return a * b});
     }
 };
