@@ -7,14 +7,15 @@ set(CXX_STANDARD_REQUIRED True)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-file(GLOB SOURCES "${SOURCE_DIR}/*.cpp")
+file(GLOB SOURCES "${SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
 add_custom_target(
     ${PROJECT_NAME}_TEST
-    COMMAND echo "Test is not implemented"
+    COMMAND ctest -VV ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${PROJECT_NAME}_tests
 )
 
 add_custom_target(
@@ -26,3 +27,17 @@ add_custom_target(
     ${PROJECT_NAME}_COVERAGE
     COMMAND echo "Not implemented"
 )
+
+enable_testing()
+
+find_package(GTest REQUIRED)
+
+file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp")
+
+message("test sources is ${TEST_SOURCES}")
+
+add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
+target_include_directories(${PROJECT_NAME}_tests PRIVATE ${INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME}_tests GTest::gtest GTest::gtest_main)
+
+add_test(NAME do-some-test COMMAND ${PROJECT_NAME}_tests)
