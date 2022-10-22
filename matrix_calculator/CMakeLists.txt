@@ -7,10 +7,10 @@ set(CXX_STANDARD_REQUIRED True)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-file(GLOB SOURCES "${SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+file(GLOB SOURCES "${SOURCE_DIR}/*.cpp")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE ${INCLUDE_DIR})
 
 add_custom_target(
     ${PROJECT_NAME}_TEST
@@ -37,7 +37,6 @@ file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp")
 message("test sources is ${TEST_SOURCES}")
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
-target_include_directories(${PROJECT_NAME}_tests PRIVATE ${INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME}_tests GTest::gtest GTest::gtest_main)
+target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} GTest::gtest GTest::gtest_main)
 
 add_test(NAME do-some-test COMMAND ${PROJECT_NAME}_tests)
