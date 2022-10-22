@@ -1,33 +1,27 @@
 #pragma once
 
-#include <cassert>
+// #include <cassert>
 #include <cstddef>
-#include <cstring>
+// #include <cstring>
+#include <algorithm>
+#include <array>
 
 template<size_t W, size_t H>
 class Matrix {
-private:
-    float *data;
 public:
-    Matrix() {
-        this->data = new float[W * H];
-    }
-
+    std::array<float, W * H> data;
+    // Matrix() = default;
     Matrix(const Matrix &other) {
-        this->data = new float[W * H];
-        std::memcpy(this->data, other.data, sizeof(float) * W * H);
+        std::copy(other.data.cbegin(), other.data.cend(), this->data.begin());
     }
 
-    Matrix(float *data, size_t n) {
-        assert(n == W * H);
-        this->data = new float[n];
-        std::memcpy(this->data, data, sizeof(float) * n);
+    Matrix(const std::array<float, W* H> data) {
+        std::copy(data.cbegin(), data.cend(), this->data.begin());
     }
 
     Matrix(Matrix<W, 1> *vs, size_t n) {
-        assert(n != 0);
+        // assert(n != 0);
 
-        this->data = new float[W * n];
         for (size_t i = 0; i < n; i++) {
             for (size_t j = 0; j < W; j++) {
                 this->data[i * W + j] = vs[i].get(0, j);
@@ -36,9 +30,8 @@ public:
     }
 
     Matrix(Matrix<1, H> *vs, size_t n) {
-        assert(n != 0);
+        // assert(n != 0);
 
-        this->data = new float[H * n];
         for (size_t j = 0; j < n; j++) {
             for (size_t i = 0; i < H; i++) {
                 this->data[i * n + j] = vs[j].get(i, 0);
@@ -46,24 +39,24 @@ public:
         }
     }
 
-    ~Matrix() {
-        delete [] this->data;
-    }
+    // ~Matrix() = default;
+    
+    // std::array<float, W>
 
     void set(float val, size_t row, size_t col) {
-        assert(row < H);
-        assert(col < W);
+        // assert(row < H);
+        // assert(col < W);
         this->data[row * W + col] = val;
     }
 
     float get(size_t row, size_t col) const {
-        assert(row < H);
-        assert(col < W);
+        // assert(row < H);
+        // assert(col < W);
         return this->data[row * W + col];
     }
 
     float* get_row(size_t row) {
-        assert(row < H);
+        // assert(row < H);
         float *res = new float[W];
 
         for (size_t i = 0; i < W; i++) {
@@ -74,7 +67,7 @@ public:
     }
 
     float* get_col(size_t col) {
-        assert(col < W);
+        // assert(col < W);
 
         float *res = new float[H];
 
@@ -86,7 +79,7 @@ public:
     }
 
     float* get_diag() {
-        assert(W == H);
+        // assert(W == H);
 
         float *res = new float[W];
         
@@ -98,7 +91,7 @@ public:
     }
 
     float* get_sec_diag() {
-        assert(W == H);
+        // assert(W == H);
 
         float *res = new float[W];
         for (size_t i = 0; i < W; i++) {
@@ -121,14 +114,14 @@ public:
     }
 
     Matrix operator+(const Matrix &other) {
-        return this->eval_bin_op(other, [](float a, float b){return a + b});
+        return this->eval_bin_op(other, [](float a, float b){return a + b;});
     }
 
     Matrix operator-(const Matrix &other) {
-        return this->eval_bin_op(other, [](float a, float b){return a - b});
+        return this->eval_bin_op(other, [](float a, float b){return a - b;});
     }
 
     Matrix operator*(const Matrix &other) {
-        return this->eval_bin_op(other, [](float a, float b){return a * b});
+        return this->eval_bin_op(other, [](float a, float b){return a * b;});
     }
 };

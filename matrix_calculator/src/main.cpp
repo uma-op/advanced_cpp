@@ -1,15 +1,16 @@
 #include <iostream>
+#include <array>
 #include "matrix.h"
 
 int main() {
-    float *a_data = new float[4]{1, 2, 3, 4};
-    float *b_data = new float[4]{5, 6, 7, 8};
-    Matrix<2, 2> a(a_data, 4);
-    Matrix<2, 2> b(b_data, 4);
-    Matrix<1, 4> c(a_data, 4);
-    Matrix<1, 4> d(b_data, 4);
+    std::array<float, 4> a_data{1, 2, 3, 4};
+    std::array<float, 4> b_data{5, 6, 7, 8};
+    Matrix<2, 2> a(a_data);
+    Matrix<2, 2> b(b_data);
+    Matrix<1, 4> c(a_data);
+    Matrix<1, 4> d(b_data);
 
-    Matrix<1, 4> *vs = new Matrix<1, 4>[2]{c, d};
+    Matrix<1, 4> vs[]{c, d};
 
     Matrix<2, 4> e(vs, 2);
 
