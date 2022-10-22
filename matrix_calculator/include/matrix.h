@@ -1,21 +1,19 @@
 #pragma once
 
-// #include <cassert>
 #include <cstddef>
-// #include <cstring>
 #include <algorithm>
 #include <array>
 
 template<size_t W, size_t H>
 class Matrix {
-public:
+ public:
     std::array<float, W * H> data;
     // Matrix() = default;
     Matrix(const Matrix &other) {
         std::copy(other.data.cbegin(), other.data.cend(), this->data.begin());
     }
 
-    Matrix(const std::array<float, W* H> data) {
+    explicit Matrix(const std::array<float, W* H> data) {
         std::copy(data.cbegin(), data.cend(), this->data.begin());
     }
 
@@ -38,10 +36,6 @@ public:
             }
         }
     }
-
-    // ~Matrix() = default;
-    
-    // std::array<float, W>
 
     void set(float val, size_t row, size_t col) {
         // assert(row < H);
@@ -82,7 +76,6 @@ public:
         // assert(W == H);
 
         float *res = new float[W];
-        
         for (size_t i = 0; i < W; i++) {
             res[i] = this->data[i * W + i];
         }
@@ -106,7 +99,9 @@ public:
 
         for (size_t row = 0; row < H; row++) {
             for (size_t col = 0; col < W; col++) {
-                res->set(op(this->get(row, col), other.get(row, col)), row, col);
+                res->set(
+                    op(this->get(row, col),
+                    other.get(row, col)), row, col);
             }
         }
 

@@ -1,8 +1,16 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  TestJob:
+  Lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lint
+        run: cmake --build . --target matrix_calculator_LINT
+
+  Building:
+    runs-on: ubuntu-latest
+    needs: [Lint]
     steps:
       - uses: actions/checkout@v3
       - name: Building
