@@ -25,7 +25,9 @@ add_custom_target(
 
 add_custom_target(
     ${PROJECT_NAME}_COVERAGE
-    COMMAND gcovr "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CMakeFiles/${PROJECT_NAME}_tests\.dir/tests" -r ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND rm -r ${CMAKE_CURRENT_BINARY_DIR}/report || echo "There is no reports"
+    COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/report
+    COMMAND gcovr "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CMakeFiles/${PROJECT_NAME}_tests\.dir/tests" -r ${CMAKE_CURRENT_SOURCE_DIR} --branches --html-details report/report.html
     DEPENDS ${PROJECT_NAME}_TEST
 )
 

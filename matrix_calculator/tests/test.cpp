@@ -17,7 +17,7 @@ class MatrixBaseSuite : public ::testing::Test {
         auto got_iter = got.data.cbegin();
         auto exp_iter = expected.data.cbegin();
         while (got_iter != got.data.cend()) {
-            if (*got_iter != *exp_iter) return false;
+            if (std::abs(*got_iter - *exp_iter) > 1e-7) return false;
             got_iter++;
             exp_iter++;
         }
@@ -55,6 +55,29 @@ TEST_F(TestMatrixConstruction, test_creation_from_array) {
     });
 
     EXPECT_TRUE(MatrixEquality(got, self));
+}
+
+TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
+    MatrixRow<5> hv1({0, 1, 2, 3, 4});
+    MatrixRow<5> hv2({5, 6, 7, 8, 9});
+    MatrixRow<5> hv3({10, 11, 12, 13, 14});
+    MatrixRow<5> hv4({15, 16, 17, 18, 19});
+    MatrixRow<5> hv5({20, 21, 22, 23, 24});
+    MatrixRow<5> hvr5({20, 21, 22, 23, 24});
+
+    Matrix<5, 5> got_h(new MatrixRow<5>[5]{ hv1, hv2, hv3, hv4, hv5 }, 5);
+
+    EXPECT_TRUE(MatrixEquality(got_h, self));
+
+    MatrixCol<5> vv1({0, 5, 10, 15, 20});
+    MatrixCol<5> vv2({1, 6, 11, 16, 21});
+    MatrixCol<5> vv3({2, 7, 12, 17, 22});
+    MatrixCol<5> vv4({3, 8, 13, 18, 23});
+    MatrixCol<5> vv5({4, 9, 14, 19, 24});
+
+    Matrix<5, 5> got_v(new MatrixCol<5>[5]{ vv1, vv2, vv3, vv4, vv5 }, 5);
+
+    EXPECT_TRUE(MatrixEquality(got_v, self));
 }
 
 TEST_F(TestMatrixAccess, test_get_single_elem) {
@@ -107,4 +130,6 @@ TEST_F(TestArithmeticOperators, test_multiplication) {
     EXPECT_TRUE(MatrixEquality(3 * other * 2, expected));
     EXPECT_TRUE(MatrixEquality(other * 6, expected));
     EXPECT_TRUE(MatrixEquality(2 * 3 * other, expected));
+
+    EXPECT_TRUE(MatrixEquality(other.mul(expected), expected));
 }
