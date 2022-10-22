@@ -20,7 +20,7 @@ add_custom_target(
 
 add_custom_target(
     ${PROJECT_NAME}_LINT
-    COMMAND cpplint --verbose=0123 --recursive ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND cpplint --filter=-legal/copyright,-runtime/explicit,-build/include_subdir --linelength=120 --recursive ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(

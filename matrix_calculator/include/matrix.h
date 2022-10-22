@@ -8,17 +8,17 @@ template<size_t W, size_t H>
 class Matrix {
  public:
     std::array<float, W * H> data;
-    // Matrix() = default;
+
     Matrix(const Matrix &other) {
         std::copy(other.data.cbegin(), other.data.cend(), this->data.begin());
     }
 
-    explicit Matrix(const std::array<float, W* H> data) {
+    Matrix(const std::array<float, W * H> data) {
         std::copy(data.cbegin(), data.cend(), this->data.begin());
     }
 
     Matrix(Matrix<W, 1> *vs, size_t n) {
-        // assert(n != 0);
+        if (n == 0) throw std::runtime_error("There is no vectors!!!");
 
         for (size_t i = 0; i < n; i++) {
             for (size_t j = 0; j < W; j++) {
@@ -28,7 +28,8 @@ class Matrix {
     }
 
     Matrix(Matrix<1, H> *vs, size_t n) {
-        // assert(n != 0);
+        if (n == 0)
+            throw std::runtime_error("There is no vectors!!!");
 
         for (size_t j = 0; j < n; j++) {
             for (size_t i = 0; i < H; i++) {
@@ -38,19 +39,20 @@ class Matrix {
     }
 
     void set(float val, size_t row, size_t col) {
-        // assert(row < H);
-        // assert(col < W);
+        if (row >= H || col >= W)
+            throw std::runtime_error("Trying to set to out of bounds");
         this->data[row * W + col] = val;
     }
 
     float get(size_t row, size_t col) const {
-        // assert(row < H);
-        // assert(col < W);
+        if (row >= H || col >= W)
+            throw std::runtime_error("Trying to get from out of bounds");
         return this->data[row * W + col];
     }
 
     float* get_row(size_t row) {
-        // assert(row < H);
+        if (row >= H)
+            throw std::runtime_error("Trying to get row from out of bounds");
         float *res = new float[W];
 
         for (size_t i = 0; i < W; i++) {
@@ -61,8 +63,8 @@ class Matrix {
     }
 
     float* get_col(size_t col) {
-        // assert(col < W);
-
+        if (col >= W)
+            throw std::runtime_error("Trying to get column from out of bounds");
         float *res = new float[H];
 
         for (size_t i = 0; i < H; i++) {
@@ -73,7 +75,8 @@ class Matrix {
     }
 
     float* get_diag() {
-        // assert(W == H);
+        if (W != H)
+            throw std::runtime_error("Trying to get diagonal of non square matrix");
 
         float *res = new float[W];
         for (size_t i = 0; i < W; i++) {
@@ -84,7 +87,8 @@ class Matrix {
     }
 
     float* get_sec_diag() {
-        // assert(W == H);
+        if (W != H)
+            throw std::runtime_error("Trying to get secondary diagonal of non square matrix");
 
         float *res = new float[W];
         for (size_t i = 0; i < W; i++) {
