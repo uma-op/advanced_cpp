@@ -13,8 +13,21 @@ class MatrixBaseSuite : public ::testing::Test {
 
     void TearDown() {}
 
+    bool MatrixEquality(const Matrix<5, 5>& got, const Matrix<5, 5>& expected) {
+        auto got_iter = got.data.cbegin();
+        auto exp_iter = expected.data.cbegin();
+        while (got_iter != got.data.cend()) {
+            if (*got_iter != *exp_iter) return false;
+            got_iter++;
+            exp_iter++;
+        }
+        return true;
+    }
+
     Matrix<5, 5> self;
 };
+
+class TestMatrixConstruction : public MatrixBaseSuite {};
 
 class TestMatrixAccess : public MatrixBaseSuite {};
 
@@ -29,24 +42,28 @@ class TestArithmeticOperators : public MatrixBaseSuite {
         }
     }
 
-    bool MatrixEquality(const Matrix<5, 5>& got, const Matrix<5, 5>& expected) {
-        auto got_iter = got.data.cbegin();
-        auto exp_iter = expected.data.cbegin();
-        while (got_iter != got.data.cend()) {
-            if (*got_iter != *exp_iter) return false;
-            got_iter++;
-            exp_iter++;
-        }
-        return true;
-    }
-
     Matrix<5, 5> other;
 };
+
+TEST_F(TestMatrixConstruction, test_creation_from_array) {
+    Matrix<5, 5> got({
+        0,  1,  2,  3,  4,
+        5,  6,  7,  8,  9,
+        10, 11, 12, 13, 14,
+        15, 16, 17, 18, 19,
+        20, 21, 22, 23, 24
+    });
+
+    EXPECT_TRUE(MatrixEquality(got, self));
+}
 
 TEST_F(TestMatrixAccess, test_get_single_elem) {
     EXPECT_EQ(self.get(2, 2), 12);
     EXPECT_EQ(self.get(0, 0), 0);
     EXPECT_THROW(self.get(6, 2), std::runtime_error);
+    EXPECT_NO_THROW(self.set(100, 0, 0));
+    EXPECT_EQ(self.get(0, 0), 100);
+    EXPECT_THROW(self.set(0, 6, 2), std::runtime_error);
 }
 
 TEST_F(TestMatrixAccess, DISABLED_test_get_col) {}
