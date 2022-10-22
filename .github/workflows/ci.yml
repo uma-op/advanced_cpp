@@ -5,7 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: |
+      - name: Building
+        run: |
           cmake -S . -B build
           cd build
           cmake --build .
+        working-directory: ./matrix_calculator
