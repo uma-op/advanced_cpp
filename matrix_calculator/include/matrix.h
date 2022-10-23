@@ -257,7 +257,7 @@ class Matrix {
                 mul *= this->get(i, p[i]);
             }
             res += parity * mul;
-        } while(next_permut(p, W));
+        } while (next_permut(p, W));
 
         return res;
     }
