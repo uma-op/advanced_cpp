@@ -98,29 +98,35 @@ class Matrix {
         return res;
     }
 
-    // TODO(uma_op): reimplemet to matrixes
+    Matrix get_diag() {
+        if (W != H) throw std::runtime_error("Trying to get diagonal of non square matrix");
 
-    // float* get_diag() {
-    //     if (W != H) throw std::runtime_error("Trying to get diagonal of non square matrix");
+        Matrix res;
 
-    //     float *res = new float[W];
-    //     for (size_t i = 0; i < W; i++) {
-    //         res[i] = this->data[i * W + i];
-    //     }
+        for (size_t i = 0; i < W; i++) {
+            for (size_t j = 0; j < H; j++) {
+                if (i == j) res.set(this->get(i, j), i, j);
+                else res.set(0, i, j);
+            }
+        }
 
-    //     return res;
-    // }
+        return res;
+    }
 
-    // float* get_sec_diag() {
-    //     if (W != H) throw std::runtime_error("Trying to get secondary diagonal of non square matrix");
+    Matrix get_sec_diag() {
+        if (W != H) throw std::runtime_error("Trying to get secondary diagonal of non square matrix");
 
-    //     float *res = new float[W];
-    //     for (size_t i = 0; i < W; i++) {
-    //         res[i] = this->data[i * W + W - 1 - i];
-    //     }
+        Matrix res;
 
-    //     return res;
-    // }
+        for (size_t i = 0; i < W; i++) {
+            for (size_t j = 0; j < H; j++) {
+                if (i + j == W - 1) res.set(this->get(i, j), i, j);
+                else res.set(0, i, j);
+            }
+        }
+
+        return res;
+    }
 
     Matrix eval_bin_op(const Matrix& other, float (*op)(float, float)) const {
         Matrix *res = new Matrix<W, H>;
@@ -178,10 +184,47 @@ class Matrix {
         return *res;
     }
 
+    Matrix operator+(float k) const {
+        return this->eval_bin_op(k, [](float a, float b) { return a + b; });
+    }
+
+    Matrix operator-(float k) const {
+        return this->eval_bin_op(k, [](float a, float b) { return a - b; });
+    }
+
     Matrix operator*(float k) const {
         return this->eval_bin_op(k, [](float a, float b) { return a * b; });
     }
+
+    Matrix add_row(const MatrixRow<W>& row, size_t row_id) {
+        if (row_id > H) throw std::runtime_error("Trying to add row to out of bounds");
+        MatrixRow<W> *rows = this->get_rows();
+        rows[row_id] = rows[row_id] + row;
+        return Matrix(rows, H);
+    }
+
+    Matrix add_col(const MatrixCol<H>& col, size_t col_id) {
+        if (col_id > W) throw std::runtime_error("Trying to add column to out of bounds");
+        MatrixCol<H> *cols = this->get_cols();
+        cols[col_id] = cols[col_id] + col;
+        return Matrix(cols, W);
+    }
 };
+
+template<size_t W, size_t H>
+Matrix<W, H> operator+(float k, const Matrix<W, H>& matrix) {
+    return matrix + k;
+}
+
+template<size_t W, size_t H>
+Matrix<W, H> operator-(float k, const Matrix<W, H>& matrix) {
+    return matrix - k;
+}
+
+template<size_t W, size_t H>
+Matrix<W, H> operator*(float k, const Matrix<W, H>& matrix) {
+    return matrix * k;
+}
 
 template<size_t N>
 class MatrixRow : public Matrix<1, N> {
@@ -216,8 +259,3 @@ class MatrixCol : public Matrix<N, 1> {
         return this->data[i];
     }
 };
-
-template<size_t W, size_t H>
-Matrix<W, H> operator*(float k, const Matrix<W, H>& matrix) {
-    return matrix * k;
-}
