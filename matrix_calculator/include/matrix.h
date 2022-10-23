@@ -106,7 +106,8 @@ class Matrix {
         for (size_t i = 0; i < W; i++) {
             for (size_t j = 0; j < H; j++) {
                 if (i == j) res.set(this->get(i, j), i, j);
-                else res.set(0, i, j);
+                else
+                    res.set(0, i, j);
             }
         }
 
@@ -121,7 +122,8 @@ class Matrix {
         for (size_t i = 0; i < W; i++) {
             for (size_t j = 0; j < H; j++) {
                 if (i + j == W - 1) res.set(this->get(i, j), i, j);
-                else res.set(0, i, j);
+                else
+                    res.set(0, i, j);
             }
         }
 
