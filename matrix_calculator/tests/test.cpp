@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "matrix.h"
 
+template<size_t H, size_t W>
 class MatrixBaseSuite : public ::testing::Test {
  protected:
     void SetUp() {
@@ -13,7 +14,6 @@ class MatrixBaseSuite : public ::testing::Test {
 
     void TearDown() {}
 
-    template<size_t H, size_t W>
     bool MatrixEquality(const Matrix<H, W>& got, const Matrix<H, W>& expected) {
         auto got_iter = got.data.cbegin();
         auto exp_iter = expected.data.cbegin();
@@ -28,11 +28,11 @@ class MatrixBaseSuite : public ::testing::Test {
     Matrix<5, 5> self;
 };
 
-class TestMatrixConstruction : public MatrixBaseSuite {};
+class TestMatrixConstruction : public MatrixBaseSuite<5, 5> {};
 
-class TestMatrixAccess : public MatrixBaseSuite {};
+class TestMatrixAccess : public MatrixBaseSuite<5, 5> {};
 
-class TestArithmeticOperators : public MatrixBaseSuite {
+class TestArithmeticOperators : public MatrixBaseSuite<5, 5> {
  protected:
     void SetUp() {
         MatrixBaseSuite::SetUp();
@@ -135,7 +135,8 @@ TEST_F(TestArithmeticOperators, test_multiplication) {
     EXPECT_TRUE(MatrixEquality(other.mul(expected), expected));
 }
 
-TEST_F(MatrixBaseSuite, test_determinant) {
+using MatrixBaseSuite_3 = MatrixBaseSuite<3, 3>;
+TEST_F(MatrixBaseSuite_3, test_determinant) {
     Matrix<3, 3> mat({
         1, 2, 3,
         -4, 5, 6,
@@ -145,7 +146,8 @@ TEST_F(MatrixBaseSuite, test_determinant) {
     EXPECT_EQ(mat.det(), -48);
 }
 
-TEST_F(MatrixBaseSuite, test_transpose) {
+using MatrixBaseSuite_3_2 = MatrixBaseSuite<3, 2>;
+TEST_F(MatrixBaseSuite_3_2, test_transpose) {
     Matrix<2, 3> mat({
         1, 2, 3,
         4, 5, 6
@@ -158,4 +160,40 @@ TEST_F(MatrixBaseSuite, test_transpose) {
     });
 
     EXPECT_TRUE(MatrixEquality(mat.transpose(), mat_T));
+}
+
+using MatrixBaseSuite_2_2 = MatrixBaseSuite<2, 2>;
+TEST_F(MatrixBaseSuite_2_2, test_minor) {
+    Matrix<3, 3> mj({
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+    });
+
+    Matrix<2, 2> mn({
+        1, 3,
+        7, 9
+    });
+
+    EXPECT_TRUE(MatrixEquality(mj.minor(1, 1), mn));
+}
+
+TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
+    Matrix<2, 3> m1({
+        1, 2, 3,
+        4, 5, 6,
+    });
+
+    Matrix<3, 2> m2({
+        6, 5,
+        4, 3,
+        2, 1
+    });
+
+    Matrix<2, 2> m3({
+        20, 14,
+        56, 41
+    });
+
+    EXPECT_TRUE(MatrixEquality(m1 * m2, m3));
 }

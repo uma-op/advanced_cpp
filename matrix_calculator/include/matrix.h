@@ -60,7 +60,7 @@ class Matrix {
         return this->data[row * W + col];
     }
 
-    MatrixRow<W> get_row(size_t row) {
+    MatrixRow<W> get_row(size_t row) const {
         if (row >= H) throw std::runtime_error("Trying to get row from out of bounds");
 
         std::array<float, W> res;
@@ -72,7 +72,7 @@ class Matrix {
         return res;
     }
 
-    MatrixRow<W>* get_rows() {
+    MatrixRow<W>* get_rows() const {
         MatrixRow<W> *res = new MatrixRow<W>[H];
         for (size_t i = 0; i < H; i++) {
             res[i] = this->get_row(i);
@@ -80,7 +80,7 @@ class Matrix {
         return res;
     }
 
-    MatrixCol<H> get_col(size_t col) {
+    MatrixCol<H> get_col(size_t col) const {
         if (col >= W) throw std::runtime_error("Trying to get column from out of bounds");
 
         std::array<float, H> res;
@@ -92,7 +92,7 @@ class Matrix {
         return res;
     }
 
-    MatrixCol<H>* get_cols() {
+    MatrixCol<H>* get_cols() const {
         MatrixCol<H> *res = new MatrixCol<H>[W];
         for (size_t i = 0; i < W; i++) {
             res[i] = this->get_col(i);
@@ -100,7 +100,7 @@ class Matrix {
         return res;
     }
 
-    Matrix get_diag() {
+    Matrix get_diag() const {
         if (W != H) throw std::runtime_error("Trying to get diagonal of non square matrix");
 
         Matrix res;
@@ -116,7 +116,7 @@ class Matrix {
         return res;
     }
 
-    Matrix get_sec_diag() {
+    Matrix get_sec_diag() const {
         if (W != H) throw std::runtime_error("Trying to get secondary diagonal of non square matrix");
 
         Matrix res;
@@ -173,11 +173,11 @@ class Matrix {
     }
 
     template<size_t _W>
-    Matrix operator*(const Matrix<W, _W> &other) const {
-        Matrix<H, _W> *res;
+    Matrix<H, _W> operator*(const Matrix<W, _W> &other) const {
+        Matrix<H, _W> res;
 
         MatrixRow<W> *self_rows = this->get_rows();
-        MatrixCol<W> *other_cols = other.get.cols();
+        MatrixCol<W> *other_cols = other.get_cols();
 
         for (size_t i = 0; i < H; i++) {
             for (size_t j = 0; j < _W; j++) {
@@ -185,7 +185,7 @@ class Matrix {
             }
         }
 
-        return *res;
+        return res;
     }
 
     Matrix operator+(float k) const {
@@ -223,6 +223,20 @@ class Matrix {
         }
 
         return Matrix<W, H>(cols, H);
+    }
+
+    Matrix<H - 1, W - 1> minor(size_t row_id, size_t col_id) {
+        Matrix<H - 1, W - 1> m;
+        for (size_t i = 0; i < H - 1; i++) {
+            for (size_t j = 0; j < W - 1; j++) {
+                if (i >= row_id && j >= col_id) m.set(this->get(i + 1, j + 1), i, j);
+                else if (i >= row_id) m.set(this->get(i + 1, j), i, j);
+                else if (j >= col_id) m.set(this->get(i, j + 1), i, j);
+                else
+                    m.set(this->get(i, j), i, j);
+            }
+        }
+        return m;
     }
 
     float det() {
@@ -303,7 +317,7 @@ class MatrixRow : public Matrix<1, N> {
         return this->data[i];
     }
 
-    float operator*(const MatrixCol<N>& other) {
+    float operator*(MatrixCol<N>& other) {
         float scal_mul = 0;
         for (size_t i = 0; i < N; i++) {
             scal_mul += (*this)[i] * other[i];
