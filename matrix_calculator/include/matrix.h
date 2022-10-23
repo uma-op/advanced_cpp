@@ -18,17 +18,19 @@ class Matrix {
  public:
     std::array<float, H * W> data;
 
-    Matrix() = default;
+    Matrix() {
+        if (W == 0 || H == 0) throw std::runtime_error("Trying to define empty matrix");
+    }
 
-    Matrix(const Matrix &other) {
+    Matrix(const Matrix &other) : Matrix() {
         std::copy(other.data.cbegin(), other.data.cend(), this->data.begin());
     }
 
-    Matrix(const std::array<float, H * W> data) {
+    Matrix(const std::array<float, H * W> data) : Matrix() {
         std::copy(data.cbegin(), data.cend(), this->data.begin());
     }
 
-    Matrix(MatrixRow<W> *vs, size_t n) {
+    Matrix(MatrixRow<W> *vs, size_t n) : Matrix() {
         if (n == 0) throw std::runtime_error("There is no vectors!!!");
 
         for (size_t i = 0; i < n; i++) {
@@ -38,7 +40,7 @@ class Matrix {
         }
     }
 
-    Matrix(MatrixCol<H> *vs, size_t n) {
+    Matrix(MatrixCol<H> *vs, size_t n) : Matrix() {
         if (n == 0) throw std::runtime_error("There is no vectors!!!");
 
         for (size_t j = 0; j < n; j++) {
@@ -61,7 +63,7 @@ class Matrix {
     MatrixRow<W> get_row(size_t row) {
         if (row >= H) throw std::runtime_error("Trying to get row from out of bounds");
 
-        std::array<float, W> *res;
+        std::array<float, W> res;
 
         for (size_t i = 0; i < W; i++) {
             res[i] = this->data[row * W + i];
@@ -81,7 +83,7 @@ class Matrix {
     MatrixCol<H> get_col(size_t col) {
         if (col >= W) throw std::runtime_error("Trying to get column from out of bounds");
 
-        std::array<float, H> *res;
+        std::array<float, H> res;
 
         for (size_t i = 0; i < H; i++) {
             res[i] = this->data[i * W + col];
@@ -212,6 +214,17 @@ class Matrix {
         return Matrix(cols, W);
     }
 
+    Matrix<W, H> transpose() {
+        MatrixRow<W> *rows = this->get_rows();
+        MatrixCol<W> *cols = new MatrixCol<W>[H];
+
+        for (size_t i = 0; i < H; i++) {
+            cols[i] = rows[i];
+        }
+
+        return Matrix<W, H>(cols, H);
+    }
+
     float det() {
         if (W != H) throw std::runtime_error("Trying to get determinant of non square matrix");
 
@@ -253,7 +266,6 @@ class Matrix {
         do {
             mul = 1;
             for (size_t i = 0; i < W; i++) {
-                std::cout << this->get(i, p[i]) << ' ';
                 mul *= this->get(i, p[i]);
             }
             res += parity * mul;
@@ -281,9 +293,10 @@ Matrix<W, H> operator*(float k, const Matrix<W, H>& matrix) {
 template<size_t N>
 class MatrixRow : public Matrix<1, N> {
  public:
+    MatrixRow() = default;
     MatrixRow(const MatrixRow& other) : Matrix<1, N>::Matrix(other) {}
     MatrixRow(const std::array<float, N> data) : Matrix<1, N>::Matrix(data) {}
-    MatrixRow(const MatrixCol<N>& other) : Matrix<1, N>::Matrix(new MatrixCol<N>[1]{other}) {}
+    MatrixRow(const MatrixCol<N>& other) : Matrix<1, N>::Matrix(other.data) {}
 
     float& operator[](size_t i) {
         if (i >= N) throw std::runtime_error("Trying to access to out of bounds");
@@ -302,9 +315,10 @@ class MatrixRow : public Matrix<1, N> {
 template<size_t N>
 class MatrixCol : public Matrix<N, 1> {
  public:
+    MatrixCol() = default;
     MatrixCol(const MatrixCol& other) : Matrix<N, 1>::Matrix(other) {}
     MatrixCol(const std::array<float, N> data) : Matrix<N, 1>::Matrix(data) {}
-    MatrixCol(const MatrixRow<N>& other) : Matrix<N, 1>::Matrix(new MatrixRow<N>[1]{other}) {}
+    MatrixCol(const MatrixRow<N>& other) : Matrix<N, 1>::Matrix(other.data) {}
 
     float& operator[](size_t i){
         if (i >= N) throw std::runtime_error("Trying to access to out of bounds");

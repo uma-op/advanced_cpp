@@ -13,7 +13,8 @@ class MatrixBaseSuite : public ::testing::Test {
 
     void TearDown() {}
 
-    bool MatrixEquality(const Matrix<5, 5>& got, const Matrix<5, 5>& expected) {
+    template<size_t H, size_t W>
+    bool MatrixEquality(const Matrix<H, W>& got, const Matrix<H, W>& expected) {
         auto got_iter = got.data.cbegin();
         auto exp_iter = expected.data.cbegin();
         while (got_iter != got.data.cend()) {
@@ -142,4 +143,19 @@ TEST_F(MatrixBaseSuite, test_determinant) {
     });
 
     EXPECT_EQ(mat.det(), -48);
+}
+
+TEST_F(MatrixBaseSuite, test_transpose) {
+    Matrix<2, 3> mat({
+        1, 2, 3,
+        4, 5, 6
+    });
+
+    Matrix<3, 2> mat_T({
+        1, 4,
+        2, 5,
+        3, 6
+    });
+
+    EXPECT_TRUE(MatrixEquality(mat.transpose(), mat_T));
 }
