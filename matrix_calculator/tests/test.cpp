@@ -133,3 +133,13 @@ TEST_F(TestArithmeticOperators, test_multiplication) {
 
     EXPECT_TRUE(MatrixEquality(other.mul(expected), expected));
 }
+
+TEST_F(MatrixBaseSuite, test_determinant) {
+    Matrix<3, 3> mat({
+        1, 2, 3,
+        -4, 5, 6,
+        7, 8, 9
+    });
+
+    EXPECT_EQ(mat.det(), -48);
+}

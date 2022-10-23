@@ -211,6 +211,56 @@ class Matrix {
         cols[col_id] = cols[col_id] + col;
         return Matrix(cols, W);
     }
+
+    float det() {
+        if (W != H) throw std::runtime_error("Trying to get determinant of non square matrix");
+
+        int parity = 1;
+        auto next_permut = [&](size_t *permut, int n){
+            size_t i, swap;
+            for (i = 0; i < n; i++) {
+                if (i == n - 1) return false;
+
+                if (permut[i] < permut[i + 1]) {
+                    int t;
+
+                    for (size_t j = 0; j * 2 < i; j++) {
+                        t = permut[j];
+                        permut[j] = permut[i - j];
+                        permut[i - j] = t;
+                        parity *= -1;
+                    }
+
+                    for (swap = 0; permut[swap] < permut[i + 1]; swap++) {}
+
+                    t = permut[i + 1];
+                    permut[i + 1] = permut[swap - 1];
+                    permut[swap - 1] = t;
+                    parity *= -1;
+
+                    break;
+                }
+            }
+            return true;
+        };
+
+        size_t *p = new size_t[W];
+        for (size_t i = 0; i < W; i++) { p[i] = i; }
+
+        float mul = 1;
+        float res = 0;
+
+        do {
+            mul = 1;
+            for (size_t i = 0; i < W; i++) {
+                std::cout << this->get(i, p[i]) << ' ';
+                mul *= this->get(i, p[i]);
+            }
+            res += parity * mul;
+        } while(next_permut(p, W));
+
+        return res;
+    }
 };
 
 template<size_t W, size_t H>
