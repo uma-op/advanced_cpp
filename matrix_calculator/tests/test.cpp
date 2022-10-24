@@ -197,3 +197,17 @@ TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
 
     EXPECT_TRUE(MatrixEquality(m1 * m2, m3));
 }
+
+using MatrixBaseSuite_2 = MatrixBaseSuite<2, 2>;
+TEST_F(MatrixBaseSuite_2, test_inverse) {
+    Matrix<2, 2> e({
+        1, 0,
+        0, 1
+    });
+    Matrix<2, 2> m1({
+        1, 2,
+        3, 4
+    });
+
+    EXPECT_TRUE(MatrixEquality(m1 * m1.inv(), e));
+}

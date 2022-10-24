@@ -247,7 +247,9 @@ class Matrix {
 
         for (size_t i = 0; i < H; i++) {
             for (size_t j = 0; j < W; j++) {
-                res.set(this->minor(i, j).det() / d, j, i);
+                if ((i + j) % 2 == 0) res.set(this->minor(i, j).det() / d, j, i);
+                else
+                    res.set(-1 * this->minor(i, j).det() / d, j, i);
             }
         }
 
