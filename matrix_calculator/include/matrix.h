@@ -239,6 +239,21 @@ class Matrix {
         return m;
     }
 
+    Matrix inv() {
+        if (W != H) throw std::runtime_error("Trying to get inverse of non square matrix");
+
+        float d = this->det();
+        Matrix res;
+
+        for (size_t i = 0; i < H; i++) {
+            for (size_t j = 0; j < W; j++) {
+                res.set(this->minor(i, j).det() / d, j, i);
+            }
+        }
+
+        return res;
+    }
+
     float det() {
         if (W != H) throw std::runtime_error("Trying to get determinant of non square matrix");
 
