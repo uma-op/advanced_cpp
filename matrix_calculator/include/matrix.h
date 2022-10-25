@@ -36,6 +36,7 @@ class Matrix {
     Matrix operator+(const Matrix &other) const;
     Matrix operator-(const Matrix &other) const;
     Matrix mul(const Matrix &other) const;
+    bool operator==(const Matrix &other) const;
 
     template<size_t _W>
     Matrix<H, _W> operator*(const Matrix<W, _W> &other) const;

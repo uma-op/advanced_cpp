@@ -14,17 +14,6 @@ class MatrixBaseSuite : public ::testing::Test {
 
     void TearDown() {}
 
-    bool MatrixEquality(const Matrix<H, W>& got, const Matrix<H, W>& expected) {
-        auto got_iter = got.data.cbegin();
-        auto exp_iter = expected.data.cbegin();
-        while (got_iter != got.data.cend()) {
-            if (std::abs(*got_iter - *exp_iter) > 1e-7) return false;
-            got_iter++;
-            exp_iter++;
-        }
-        return true;
-    }
-
     Matrix<5, 5> self;
 };
 
@@ -55,7 +44,7 @@ TEST_F(TestMatrixConstruction, test_creation_from_array) {
         20, 21, 22, 23, 24
     });
 
-    EXPECT_TRUE(MatrixEquality(got, self));
+    EXPECT_TRUE(got == self);
 }
 
 TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
@@ -68,7 +57,7 @@ TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
 
     Matrix<5, 5> got_h(new MatrixRow<5>[5]{ hv1, hv2, hv3, hv4, hv5 }, 5);
 
-    EXPECT_TRUE(MatrixEquality(got_h, self));
+    EXPECT_TRUE(got_h == self);
 
     MatrixCol<5> vv1({0, 5, 10, 15, 20});
     MatrixCol<5> vv2({1, 6, 11, 16, 21});
@@ -78,7 +67,7 @@ TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
 
     Matrix<5, 5> got_v(new MatrixCol<5>[5]{ vv1, vv2, vv3, vv4, vv5 }, 5);
 
-    EXPECT_TRUE(MatrixEquality(got_v, self));
+    EXPECT_TRUE(got_v == self);
 }
 
 TEST_F(TestMatrixAccess, test_get_single_elem) {
@@ -102,8 +91,8 @@ TEST_F(TestArithmeticOperators, test_addition) {
         21, 22, 23, 24, 25
     });
 
-    EXPECT_TRUE(MatrixEquality(self + other, expected));
-    EXPECT_TRUE(MatrixEquality(other + self, expected));
+    EXPECT_TRUE((self + other) == expected);
+    EXPECT_TRUE((other + self) == expected);
 }
 
 TEST_F(TestArithmeticOperators, test_substraction) {
@@ -115,7 +104,7 @@ TEST_F(TestArithmeticOperators, test_substraction) {
         0, 0, 0, 0, 0
     });
 
-    EXPECT_TRUE(MatrixEquality(self - self, expected));
+    EXPECT_TRUE((self - self) == expected);
 }
 
 TEST_F(TestArithmeticOperators, test_multiplication) {
@@ -127,12 +116,12 @@ TEST_F(TestArithmeticOperators, test_multiplication) {
         6, 6, 6, 6, 6,
     });
 
-    EXPECT_FALSE(MatrixEquality(2 * other, expected));
-    EXPECT_TRUE(MatrixEquality(3 * other * 2, expected));
-    EXPECT_TRUE(MatrixEquality(other * 6, expected));
-    EXPECT_TRUE(MatrixEquality(2 * 3 * other, expected));
+    EXPECT_FALSE(2 * other == expected);
+    EXPECT_TRUE(3 * other * 2 == expected);
+    EXPECT_TRUE(other * 6 == expected);
+    EXPECT_TRUE(2 * 3 * other == expected);
 
-    EXPECT_TRUE(MatrixEquality(other.mul(expected), expected));
+    EXPECT_TRUE(other.mul(expected) == expected);
 }
 
 using MatrixBaseSuite_3 = MatrixBaseSuite<3, 3>;
@@ -159,7 +148,7 @@ TEST_F(MatrixBaseSuite_3_2, test_transpose) {
         3, 6
     });
 
-    EXPECT_TRUE(MatrixEquality(mat.transpose(), mat_T));
+    EXPECT_TRUE(mat.transpose() == mat_T);
 }
 
 using MatrixBaseSuite_2_2 = MatrixBaseSuite<2, 2>;
@@ -175,7 +164,7 @@ TEST_F(MatrixBaseSuite_2_2, test_minor) {
         7, 9
     });
 
-    EXPECT_TRUE(MatrixEquality(mj.minor(1, 1), mn));
+    EXPECT_TRUE(mj.minor(1, 1) == mn);
 }
 
 TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
@@ -195,7 +184,7 @@ TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
         56, 41
     });
 
-    EXPECT_TRUE(MatrixEquality(m1 * m2, m3));
+    EXPECT_TRUE(m1 * m2 == m3);
 }
 
 using MatrixBaseSuite_2 = MatrixBaseSuite<2, 2>;
@@ -209,5 +198,5 @@ TEST_F(MatrixBaseSuite_2, test_inverse) {
         3, 4
     });
 
-    EXPECT_TRUE(MatrixEquality(m1 * m1.inv(), e));
+    EXPECT_TRUE(m1 * m1.inv() == e);
 }

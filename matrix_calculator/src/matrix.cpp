@@ -7,7 +7,7 @@
 
 template<size_t H, size_t W>
 Matrix<H, W>::Matrix() {
-    if (W == 0 || H == 0) throw std::runtime_error("Trying to define empty matrix");
+    if (W == 0 || H == 0) { throw std::runtime_error("Trying to define empty matrix"); }
 }
 
 template<size_t H, size_t W>
@@ -22,7 +22,7 @@ Matrix<H, W>::Matrix(const std::array<float, H * W> data) : Matrix() {
 
 template<size_t H, size_t W>
 Matrix<H, W>::Matrix(MatrixRow<W> *vs, size_t n) : Matrix() {
-    if (n == 0) throw std::runtime_error("There is no vectors!!!");
+    if (n == 0) { throw std::runtime_error("There is no vectors!!!"); }
 
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < W; j++) {
@@ -33,7 +33,7 @@ Matrix<H, W>::Matrix(MatrixRow<W> *vs, size_t n) : Matrix() {
 
 template<size_t H, size_t W>
 Matrix<H, W>::Matrix(MatrixCol<H> *vs, size_t n) : Matrix() {
-    if (n == 0) throw std::runtime_error("There is no vectors!!!");
+    if (n == 0) { throw std::runtime_error("There is no vectors!!!"); }
 
     for (size_t j = 0; j < n; j++) {
         for (size_t i = 0; i < H; i++) {
@@ -44,19 +44,19 @@ Matrix<H, W>::Matrix(MatrixCol<H> *vs, size_t n) : Matrix() {
 
 template<size_t H, size_t W>
 void Matrix<H, W>::set(float val, size_t row, size_t col) {
-    if (row >= H || col >= W) throw std::runtime_error("Trying to set to out of bounds");
+    if (row >= H || col >= W) { throw std::runtime_error("Trying to set to out of bounds"); }
     this->data[row * W + col] = val;
 }
 
 template<size_t H, size_t W>
 float Matrix<H, W>::get(size_t row, size_t col) const {
-        if (row >= H || col >= W) throw std::runtime_error("Trying to get from out of bounds");
+        if (row >= H || col >= W) { throw std::runtime_error("Trying to get from out of bounds"); }
         return this->data[row * W + col];
     }
 
 template<size_t H, size_t W>
 MatrixRow<W> Matrix<H, W>::get_row(size_t row) const {
-    if (row >= H) throw std::runtime_error("Trying to get row from out of bounds");
+    if (row >= H) { throw std::runtime_error("Trying to get row from out of bounds"); }
 
     std::array<float, W> res;
 
@@ -78,7 +78,7 @@ MatrixRow<W>* Matrix<H, W>::get_rows() const {
 
 template<size_t H, size_t W>
 MatrixCol<H> Matrix<H, W>::get_col(size_t col) const {
-    if (col >= W) throw std::runtime_error("Trying to get column from out of bounds");
+    if (col >= W) { throw std::runtime_error("Trying to get column from out of bounds"); }
 
     std::array<float, H> res;
 
@@ -100,15 +100,16 @@ MatrixCol<H>* Matrix<H, W>::get_cols() const {
 
 template<size_t H, size_t W>
 Matrix<H, W> Matrix<H, W>::get_diag() const {
-    if (W != H) throw std::runtime_error("Trying to get diagonal of non square matrix");
+    if (W != H) { throw std::runtime_error("Trying to get diagonal of non square matrix"); }
 
     Matrix res;
 
     for (size_t i = 0; i < W; i++) {
         for (size_t j = 0; j < H; j++) {
-            if (i == j) res.set(this->get(i, j), i, j);
-            else
+            if (i == j) { res.set(this->get(i, j), i, j); }
+            else {
                 res.set(0, i, j);
+            }
         }
     }
 
@@ -117,15 +118,16 @@ Matrix<H, W> Matrix<H, W>::get_diag() const {
 
 template<size_t H, size_t W>
 Matrix<H, W> Matrix<H, W>::get_sec_diag() const {
-    if (W != H) throw std::runtime_error("Trying to get secondary diagonal of non square matrix");
+    if (W != H) { throw std::runtime_error("Trying to get secondary diagonal of non square matrix"); }
 
     Matrix res;
 
     for (size_t i = 0; i < W; i++) {
         for (size_t j = 0; j < H; j++) {
-            if (i + j == W - 1) res.set(this->get(i, j), i, j);
-            else
+            if (i + j == W - 1) { res.set(this->get(i, j), i, j); }
+            else {
                 res.set(0, i, j);
+            }
         }
     }
 
@@ -178,6 +180,18 @@ Matrix<H, W> Matrix<H, W>::mul(const Matrix &other) const {
 }
 
 template<size_t H, size_t W>
+bool Matrix<H, W>::operator==(const Matrix &other) const {
+    auto this_iter = this->data.cbegin();
+    auto other_iter = other.data.cbegin();
+    while (this_iter != this->data.cend()) {
+        if (std::abs(*this_iter - *other_iter) > 1e-7) return false;
+        this_iter++;
+        other_iter++;
+    }
+    return true;
+}
+
+template<size_t H, size_t W>
 template<size_t _W>
 Matrix<H, _W> Matrix<H, W>::operator*(const Matrix<W, _W> &other) const {
     Matrix<H, _W> res;
@@ -211,7 +225,7 @@ Matrix<H, W> Matrix<H, W>::operator*(float k) const {
 
 template<size_t H, size_t W>
 Matrix<H, W> Matrix<H, W>::add_row(const MatrixRow<W>& row, size_t row_id) {
-    if (row_id > H) throw std::runtime_error("Trying to add row to out of bounds");
+    if (row_id > H) { throw std::runtime_error("Trying to add row to out of bounds"); }
     MatrixRow<W> *rows = this->get_rows();
     rows[row_id] = rows[row_id] + row;
     return Matrix(rows, H);
@@ -219,7 +233,7 @@ Matrix<H, W> Matrix<H, W>::add_row(const MatrixRow<W>& row, size_t row_id) {
 
 template<size_t H, size_t W>
 Matrix<H, W> Matrix<H, W>::add_col(const MatrixCol<H>& col, size_t col_id) {
-    if (col_id > W) throw std::runtime_error("Trying to add column to out of bounds");
+    if (col_id > W) { throw std::runtime_error("Trying to add column to out of bounds"); }
     MatrixCol<H> *cols = this->get_cols();
     cols[col_id] = cols[col_id] + col;
     return Matrix(cols, W);
@@ -242,11 +256,12 @@ Matrix<H - 1, W - 1> Matrix<H, W>::minor(size_t row_id, size_t col_id) {
     Matrix<H - 1, W - 1> m;
     for (size_t i = 0; i < H - 1; i++) {
         for (size_t j = 0; j < W - 1; j++) {
-            if (i >= row_id && j >= col_id) m.set(this->get(i + 1, j + 1), i, j);
-            else if (i >= row_id) m.set(this->get(i + 1, j), i, j);
-            else if (j >= col_id) m.set(this->get(i, j + 1), i, j);
-            else
+            if (i >= row_id && j >= col_id) { m.set(this->get(i + 1, j + 1), i, j); }
+            else if (i >= row_id) { m.set(this->get(i + 1, j), i, j); }
+            else if (j >= col_id) { m.set(this->get(i, j + 1), i, j); }
+            else {
                 m.set(this->get(i, j), i, j);
+            }
         }
     }
     return m;
@@ -254,16 +269,17 @@ Matrix<H - 1, W - 1> Matrix<H, W>::minor(size_t row_id, size_t col_id) {
 
 template<size_t H, size_t W>
 Matrix<H, W> Matrix<H, W>::inv() {
-    if (W != H) throw std::runtime_error("Trying to get inverse of non square matrix");
+    if (W != H) { throw std::runtime_error("Trying to get inverse of non square matrix"); }
 
     float d = this->det();
     Matrix res;
 
     for (size_t i = 0; i < H; i++) {
         for (size_t j = 0; j < W; j++) {
-            if ((i + j) % 2 == 0) res.set(this->minor(i, j).det() / d, j, i);
-            else
+            if ((i + j) % 2 == 0) { res.set(this->minor(i, j).det() / d, j, i); }
+            else {
                 res.set(-1 * this->minor(i, j).det() / d, j, i);
+            }
         }
     }
 
@@ -272,13 +288,13 @@ Matrix<H, W> Matrix<H, W>::inv() {
 
 template<size_t H, size_t W>
 float Matrix<H, W>::det() {
-    if (W != H) throw std::runtime_error("Trying to get determinant of non square matrix");
+    if (W != H) { throw std::runtime_error("Trying to get determinant of non square matrix"); }
 
     int parity = 1;
     auto next_permut = [&](size_t *permut, int n){
         size_t i, swap;
         for (i = 0; i < n; i++) {
-            if (i == n - 1) return false;
+            if (i == n - 1) { return false; }
 
             if (permut[i] < permut[i + 1]) {
                 int t;
@@ -346,7 +362,7 @@ MatrixRow<N>::MatrixRow(const MatrixCol<N>& other) : Matrix<1, N>::Matrix(other.
 
 template<size_t N>
 float& MatrixRow<N>::operator[](size_t i) {
-    if (i >= N) throw std::runtime_error("Trying to access to out of bounds");
+    if (i >= N) { throw std::runtime_error("Trying to access to out of bounds"); }
     return this->data[i];
 }
 
@@ -370,6 +386,6 @@ MatrixCol<N>::MatrixCol(const MatrixRow<N>& other) : Matrix<N, 1>::Matrix(other.
 
 template<size_t N>
 float& MatrixCol<N>::operator[](size_t i){
-    if (i >= N) throw std::runtime_error("Trying to access to out of bounds");
+    if (i >= N) { throw std::runtime_error("Trying to access to out of bounds"); }
     return this->data[i];
 }
