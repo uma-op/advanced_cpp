@@ -19,6 +19,15 @@ Matrix<H, W>::Matrix(const Matrix &other) : Matrix() {
 }
 
 template<size_t H, size_t W>
+Matrix<H, W>::Matrix(std::initializer_list<float> data) : Matrix() {
+    if (data.size() != 0 && data.size() != H * W) {
+        throw std::runtime_error("Trying to implement with wrong amount of parameters");
+    }
+
+    std::copy(data.begin(), data.end(), this->data.begin());
+}
+
+template<size_t H, size_t W>
 Matrix<H, W>::Matrix(const std::array<float, H * W> data) : Matrix() {
     std::copy(data.cbegin(), data.cend(), this->data.begin());
 }

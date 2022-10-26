@@ -193,7 +193,6 @@ TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
 
 using MatrixBaseSuite_2 = MatrixBaseSuite<2, 2>;
 TEST_F(MatrixBaseSuite_2, test_inverse) {
-    // Matrix<2, 2> a {2, 2, 2, 2};
     Matrix<2, 2> e({
         1, 0,
         0, 1

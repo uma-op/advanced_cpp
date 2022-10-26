@@ -16,6 +16,7 @@ class Matrix {
 
     Matrix();
     Matrix(const Matrix &other);
+    Matrix(std::initializer_list<float>);
     Matrix(const std::array<float, H * W> data);
     Matrix(std::array<MatrixRow<W>, H> vs);
     Matrix(std::array<MatrixCol<H>, W> vs);
