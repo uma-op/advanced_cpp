@@ -425,7 +425,7 @@ template<size_t N>
 MatrixCol<N>::MatrixCol(const MatrixRow<N> &other) : Matrix<N, 1>::Matrix(other.data) {}
 
 template<size_t N>
-float& MatrixCol<N>::operator[](size_t i){
+float& MatrixCol<N>::operator[](size_t i) {
     if (i >= N) {
         throw std::runtime_error("Trying to access to out of bounds");
     }
