@@ -14,4 +14,3 @@ foreach(HOMEWORK_DIR IN LISTS HOMEWORK_DIRS)
         list(APPEND HOMEWORK_${TARGET_TYPE}_TARGETS ${HOMEWORK_DIR}_${TARGET_TYPE})
     endforeach()
 endforeach()
-

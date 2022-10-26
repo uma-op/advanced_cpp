@@ -55,7 +55,9 @@ TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
     MatrixRow<5> hv5({20, 21, 22, 23, 24});
     MatrixRow<5> hvr5({20, 21, 22, 23, 24});
 
-    Matrix<5, 5> got_h(new MatrixRow<5>[5]{ hv1, hv2, hv3, hv4, hv5 }, 5);
+    std::array<MatrixRow<5>, 5> rdm ({ hv1, hv2, hv3, hv4, hv5 });
+
+    Matrix<5, 5> got_h(rdm);
 
     EXPECT_TRUE(got_h == self);
 
@@ -65,7 +67,9 @@ TEST_F(TestMatrixConstruction, test_creation_from_vectors) {
     MatrixCol<5> vv4({3, 8, 13, 18, 23});
     MatrixCol<5> vv5({4, 9, 14, 19, 24});
 
-    Matrix<5, 5> got_v(new MatrixCol<5>[5]{ vv1, vv2, vv3, vv4, vv5 }, 5);
+    std::array<MatrixCol<5>, 5> cdm ({ vv1, vv2, vv3, vv4, vv5 });
+
+    Matrix<5, 5> got_v(cdm);
 
     EXPECT_TRUE(got_v == self);
 }
@@ -189,6 +193,7 @@ TEST_F(MatrixBaseSuite_2_2, test_matrix_multiplication) {
 
 using MatrixBaseSuite_2 = MatrixBaseSuite<2, 2>;
 TEST_F(MatrixBaseSuite_2, test_inverse) {
+    // Matrix<2, 2> a {2, 2, 2, 2};
     Matrix<2, 2> e({
         1, 0,
         0, 1

@@ -17,16 +17,16 @@ class Matrix {
     Matrix();
     Matrix(const Matrix &other);
     Matrix(const std::array<float, H * W> data);
-    Matrix(MatrixRow<W> *vs, size_t n);
-    Matrix(MatrixCol<H> *vs, size_t n);
+    Matrix(std::array<MatrixRow<W>, H> vs);
+    Matrix(std::array<MatrixCol<H>, W> vs);
 
     void set(float val, size_t row, size_t col);
 
     float get(size_t row, size_t col) const;
     MatrixRow<W> get_row(size_t row) const;
-    MatrixRow<W>* get_rows() const;
+    std::array<MatrixRow<W>, H> get_rows() const;
     MatrixCol<H> get_col(size_t col) const;
-    MatrixCol<H>* get_cols() const;
+    std::array<MatrixCol<H>, W> get_cols() const;
     Matrix get_diag() const;
     Matrix get_sec_diag() const;
 

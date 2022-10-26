@@ -41,7 +41,7 @@ message("test sources is ${TEST_SOURCES}")
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
 target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} GTest::gtest GTest::gtest_main)
-target_compile_options(${PROJECT_NAME}_tests PRIVATE "--coverage")
-target_link_options(${PROJECT_NAME}_tests PRIVATE "--coverage")
+target_compile_options(${PROJECT_NAME}_tests PRIVATE --coverage -g)
+target_link_options(${PROJECT_NAME}_tests PRIVATE --coverage)
 
 add_test(NAME do-some-test COMMAND ${PROJECT_NAME}_tests)
