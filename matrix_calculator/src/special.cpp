@@ -19,17 +19,13 @@ Matrix<W, H> Matrix<H, W>::transpose() {
 template<size_t H, size_t W>
 Matrix<H - 1, W - 1> Matrix<H, W>::minor(size_t row_id, size_t col_id) {
     Matrix<H - 1, W - 1> m;
+    size_t offset_row = 0, offset_col = 0;
     for (size_t i = 0; i < H - 1; i++) {
         for (size_t j = 0; j < W - 1; j++) {
-            if (i >= row_id && j >= col_id) {
-                m.set(this->get(i + 1, j + 1), i, j);
-            } else if (i >= row_id) {
-                m.set(this->get(i + 1, j), i, j);
-            } else if (j >= col_id) {
-                m.set(this->get(i, j + 1), i, j);
-            } else {
-                m.set(this->get(i, j), i, j);
-            }
+            offset_row = i >= row_id ? 1 : 0;
+            offset_col = j >= col_id ? 1 : 0;
+
+            m.set(this->get(i + offset_row, j + offset_col), i, j);
         }
     }
     return m;
