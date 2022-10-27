@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <array>
+#include <vector>
 
 template<size_t N>
 class MatrixRow;
@@ -16,7 +17,7 @@ class Matrix {
 
     Matrix();
     Matrix(const Matrix &other);
-    Matrix(std::initializer_list<float>);
+    Matrix(std::initializer_list<float> data);
     Matrix(const std::array<float, H * W> data);
     Matrix(std::array<MatrixRow<W>, H> vs);
     Matrix(std::array<MatrixCol<H>, W> vs);
@@ -53,6 +54,14 @@ class Matrix {
     Matrix<H - 1, W - 1> minor(size_t row_id, size_t col_id);
     Matrix inv();
     float det();
+
+    std::vector<MatrixRow<W>> rows_slice(size_t begin);
+    std::vector<MatrixRow<W>> rows_slice(size_t begin, size_t end);
+    std::vector<MatrixRow<W>> rows_slice(size_t begin, size_t end, int step);
+
+    std::vector<MatrixCol<H>> cols_slice(size_t begin);
+    std::vector<MatrixCol<H>> cols_slice(size_t begin, size_t end);
+    std::vector<MatrixCol<H>> cols_slice(size_t begin, size_t end, int step);
 };
 
 template<size_t W, size_t H>
@@ -69,12 +78,17 @@ class MatrixRow : public Matrix<1, N> {
  public:
     MatrixRow() = default;
     MatrixRow(const MatrixRow& other);
+    MatrixRow(std::initializer_list<float> data);
     MatrixRow(const std::array<float, N> data);
     MatrixRow(const MatrixCol<N>& other);
 
     float& operator[](size_t i);
 
     float operator*(MatrixCol<N>& other);
+
+    std::vector<float> slice(size_t begin);
+    std::vector<float> slice(size_t begin, size_t end);
+    std::vector<float> slice(size_t begin, size_t end, int step);
 };
 
 template<size_t N>
@@ -82,10 +96,19 @@ class MatrixCol : public Matrix<N, 1> {
  public:
     MatrixCol() = default;
     MatrixCol(const MatrixCol& other);
+    MatrixCol(std::initializer_list<float> data);
     MatrixCol(const std::array<float, N> data);
     MatrixCol(const MatrixRow<N>& other);
 
     float& operator[](size_t i);
+
+    std::vector<float> slice(size_t begin);
+    std::vector<float> slice(size_t begin, size_t end);
+    std::vector<float> slice(size_t begin, size_t end, int step);
 };
 
-#include "matrix.cpp"
+#include "constructors.cpp"
+#include "access.cpp"
+#include "arithmetics.cpp"
+#include "special.cpp"
+#include "slice.cpp"

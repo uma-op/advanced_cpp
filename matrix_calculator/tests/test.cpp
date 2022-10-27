@@ -204,3 +204,31 @@ TEST_F(MatrixBaseSuite_2, test_inverse) {
 
     EXPECT_TRUE(m1 * m1.inv() == e);
 }
+
+using MatrixBaseSuite_5 = MatrixBaseSuite<5, 5>;
+TEST_F(MatrixBaseSuite_5, test_vector_slice) {
+    MatrixRow<5> r {1, 2, 3, 4, 5};
+
+    auto print_slice = [](std::vector<float> v){
+        std::cout << ">>>>> size of slice is " << v.size() << std::endl;
+        for (auto b = v.begin(); b != v.end(); b++) {
+            std::cout << *b << ' ';
+        }
+        std::cout << std::endl;
+    };
+
+    std::vector<float> s;
+
+    s = r.slice(0, 5);
+    print_slice(s);
+    s = r.slice(0, 2);
+    print_slice(s);
+    s = r.slice(0, 5, 2);
+    print_slice(s);
+    s = r.slice(4, 0, -1);
+    print_slice(s);
+    s = r.slice(4, -1, -1);
+    print_slice(s);
+    s = r.slice(4, 0);
+    print_slice(s);
+}
