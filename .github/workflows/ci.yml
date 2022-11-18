@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches:
+      matrix-calculator
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    container: t1d333/cpp-app
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lint
+        run: |
+          cmake -S . -B build
+          cmake --build build --target matrix_calculator_LINT
+
+  Build:
+    runs-on: ubuntu-latest
+    container: t1d333/cpp-app
+    needs: [Lint]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cmake -S . -B build
+          cmake --build build
+
+  Test:
+    runs-on: ubuntu-latest
+    container: t1d333/cpp-app
+    needs: [Lint, Build]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test
+        run: |
+          cmake -S . -B build
+          cmake --build build --target matrix_calculator_TEST
