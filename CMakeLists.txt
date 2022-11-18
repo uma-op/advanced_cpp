@@ -4,7 +4,7 @@ project(AdvancedCpp)
 set(CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED True)
 
-set(HOMEWORK_DIRS matrix_calculator)
+set(HOMEWORK_DIRS matrix_calculator stl_container)
 set(TARGET_TYPES TEST LINT COVERAGE)
 
 foreach(HOMEWORK_DIR IN LISTS HOMEWORK_DIRS)
