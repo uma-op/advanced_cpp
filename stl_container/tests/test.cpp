@@ -54,4 +54,9 @@ TEST_F(BaseSuite, passed) {
 
 	EXPECT_EQ(*(s.find(7)), 7);
 	EXPECT_EQ(*(s.lower_bound(6)), 7);
+	EXPECT_EQ(*(s.lower_bound(7)), 7);
+	EXPECT_EQ(*(s.lower_bound(9)), 9);
+
+	s.insert(15);
+	EXPECT_EQ(*(s.lower_bound(12)), 15);
 }

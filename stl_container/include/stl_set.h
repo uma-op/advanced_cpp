@@ -192,13 +192,47 @@ class Set {
 
     Set() : t(nullptr), begin(nullptr), end(nullptr), cmp(), lenght(0) {}
 
-    // template<typename InputIt>
-    // Set(InputIt begin, InputIt end);
+    template<typename InputIt>
+    Set(InputIt begin, InputIt end) : Set() {
+		while (begin != end) {
+			s.insert(*begin);
+			begin++;
+		}
 
-    // Set(std::initializer_list<Key> init);
-    // Set(const Set &other);
-    // Set& operator=(const Set &other);
-    ~Set() = default;
+		s.insert(*end);
+	}
+
+    Set(std::initializer_list<Key> init) : Set() {
+		for (size_t i = 0; i < init.size(); i++) {
+			this->insert(init[i]);
+		}
+	}
+
+    Set(const Set &other) : Set(), Set(other.cbegin(), other.cend()) {}
+
+    Set& operator=(const Set &other) {
+		auto b = this->cbegin();
+		auto d = b.value;
+		while (b.value != nullptr) {
+			d = b.value;
+			b++;
+			delete d;
+		}
+
+		this->t = nullptr;
+		this->begin = nullptr;
+		this->end = nullptr;
+		this->lenght = 0;
+
+		b = other.begin();
+		while (b.value != nullptr) {
+			this->insert(*b);
+		}
+
+		return this;
+	}
+
+    ~Set();
 
     iterator cbegin() const {
 		return iterator(this->begin);
@@ -255,3 +289,14 @@ class Set {
 		return this->lenght == 0;
 	}
 };
+
+template<typename Key, typename Compare, typename Allocator>
+Set<Key, Compare, Allocator>::~Set() {
+	auto b = this->cbegin();
+	auto d = b.value;
+	while (b.value != nullptr) {
+		d = b.value;
+		b++;
+		delete d;
+	}
+}
