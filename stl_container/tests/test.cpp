@@ -3,8 +3,8 @@
 
 class BaseSuite : public ::testing::Test {
   protected:
-    void SetUp();
-    void TearDown();
+    void SetUp() {};
+    void TearDown() {};
 };
 
 TEST_F(BaseSuite, passed) {
