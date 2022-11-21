@@ -2,11 +2,11 @@
 #include "stl_set.h"
 
 class BaseSuite : public ::testing::Test {
-  protected:
-    void SetUp() {};
-    void TearDown() {};
+ protected:
+    void SetUp() {}
+    void TearDown() {}
 
-  	Set<int> s;
+    Set<int> s;
 };
 
 TEST_F(BaseSuite, passed) {
@@ -24,39 +24,39 @@ TEST_F(BaseSuite, passed) {
     EXPECT_EQ(s.t->left->left->value, 7);
     EXPECT_EQ(s.t->left->right->value, 9);
 
-	s.erase(7);
-	EXPECT_EQ(s.t->left->left, nullptr);
+    s.erase(7);
+    EXPECT_EQ(s.t->left->left, nullptr);
 
-	s.erase(8);
-	EXPECT_EQ(s.t->left->value, 9);
+    s.erase(8);
+    EXPECT_EQ(s.t->left->value, 9);
 
-	s.insert(7);
+    s.insert(7);
 
-	auto b = s.cbegin();
-	auto e = s.cend();
+    auto b = s.cbegin();
+    auto e = s.cend();
 
-	std::cout << "Backward iteration" << std::endl;
+    std::cout << "Backward iteration" << std::endl;
 
-	while (e.value) {
-		std::cout << *e << std::endl;
-		e--;
-	}
+    while (e.value) {
+        std::cout << *e << std::endl;
+        e--;
+    }
 
-	std::cout << "Forward iteration" << std::endl;
+    std::cout << "Forward iteration" << std::endl;
 
-	while (b.value) {
-		std::cout << *b << std::endl;
-		b++;
-	}
+    while (b.value) {
+        std::cout << *b << std::endl;
+        b++;
+    }
 
-	EXPECT_FALSE(s.empty());
-	EXPECT_EQ(s.size(), 4);
+    EXPECT_FALSE(s.empty());
+    EXPECT_EQ(s.size(), 4);
 
-	EXPECT_EQ(*(s.find(7)), 7);
-	EXPECT_EQ(*(s.lower_bound(6)), 7);
-	EXPECT_EQ(*(s.lower_bound(7)), 7);
-	EXPECT_EQ(*(s.lower_bound(9)), 9);
+    EXPECT_EQ(*(s.find(7)), 7);
+    EXPECT_EQ(*(s.lower_bound(6)), 7);
+    EXPECT_EQ(*(s.lower_bound(7)), 7);
+    EXPECT_EQ(*(s.lower_bound(9)), 9);
 
-	s.insert(15);
-	EXPECT_EQ(*(s.lower_bound(12)), 15);
+    s.insert(15);
+    EXPECT_EQ(*(s.lower_bound(12)), 15);
 }
