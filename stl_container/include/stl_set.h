@@ -208,8 +208,35 @@ class Set {
 		return iterator(this->end);
 	}
 
-	iterator find(Key val) const;
-	iterator lower_bound(Key val) const;
+	iterator find(Key val) const {
+		iterator f(nullptr);
+		ListedAVLTree *cur = this->t;
+
+		while (cur != nullptr) {
+			if (!(this->cmp(cur->value, val) || this->cmp(val, cur->value))) {
+				f.value = cur;
+				break;
+			} else if (this->cmp(cur->value, val)) cur = cur->right;
+			else cur = cur->left;
+		} 
+
+		return f;
+	}
+
+	iterator lower_bound(Key val) const {
+		iterator lb(nullptr);
+		ListedAVLTree *cur = this->t;
+
+		while (cur != nullptr) {
+			if (this->cmp(cur->value, val)) cur = cur->right;
+			else {
+				lb.value = cur;
+				cur = cur->left;
+			}
+		}
+
+		return lb;
+	}
 	
 	void insert(Key val) {
 		ListedAVLTree *n = new ListedAVLTree(val);

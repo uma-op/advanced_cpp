@@ -51,4 +51,7 @@ TEST_F(BaseSuite, passed) {
 
 	EXPECT_FALSE(s.empty());
 	EXPECT_EQ(s.size(), 4);
+
+	EXPECT_EQ(*(s.find(7)), 7);
+	EXPECT_EQ(*(s.lower_bound(6)), 7);
 }
