@@ -35,8 +35,20 @@ TEST_F(BaseSuite, passed) {
 	auto b = s.cbegin();
 	auto e = s.cend();
 
-	do {
+	std::cout << "Backward iteration" << std::endl;
+
+	while (e.value) {
 		std::cout << *e << std::endl;
 		e--;
-	} while (b != e);
+	}
+
+	std::cout << "Forward iteration" << std::endl;
+
+	while (b.value) {
+		std::cout << *b << std::endl;
+		b++;
+	}
+
+	EXPECT_FALSE(s.empty());
+	EXPECT_EQ(s.size(), 4);
 }

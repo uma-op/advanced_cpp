@@ -17,6 +17,7 @@ class Set {
     ListedAVLTree *t;
 	ListedAVLTree *begin, *end;
 	Compare cmp;
+	size_t lenght;
 
 	ListedAVLTree* rotate_left(ListedAVLTree *n) {
 		if (n->right == nullptr) return n;
@@ -60,6 +61,8 @@ class Set {
 
 			if (n->next == nullptr) this->end = n;
 
+			this->lenght++;
+
 			return n;
 		}
 
@@ -87,6 +90,8 @@ class Set {
 				this->end = t->prev;
 				this->end->next = nullptr;
 			}
+
+			this->lenght--;
 
 			ListedAVLTree* q = t->left;
 			ListedAVLTree* r = t->right;
@@ -185,7 +190,7 @@ class Set {
 		// iterator operator--(iterator);
 	};
 
-    Set() : t(nullptr), begin(nullptr), end(nullptr), cmp() {}
+    Set() : t(nullptr), begin(nullptr), end(nullptr), cmp(), lenght(0) {}
 
     // template<typename InputIt>
     // Set(InputIt begin, InputIt end);
@@ -213,5 +218,13 @@ class Set {
 
 	void erase(Key val) {
 		this->erase_(this->t, val);
+	}
+
+	size_t size() {
+		return this->lenght;
+	}
+
+	bool empty() {
+		return this->lenght == 0;
 	}
 };
