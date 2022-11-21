@@ -36,7 +36,7 @@ TEST_F(BaseSuite, passed) {
 	auto e = s.cend();
 
 	do {
-		std::cout << *b << std::endl;
-		b++;
+		std::cout << *e << std::endl;
+		e--;
 	} while (b != e);
 }

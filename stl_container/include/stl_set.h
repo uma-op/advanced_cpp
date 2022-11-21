@@ -57,6 +57,9 @@ class Set {
 				
 				if (n->next != nullptr) n->next->prev = n;
 			}
+
+			if (n->next == nullptr) this->end = n;
+
 			return n;
 		}
 
@@ -177,7 +180,7 @@ class Set {
 		// iterator operator++(iterator) {};
 		iterator operator--(int) {
 			this->value = value->prev;
-			return this;
+			return *this;
 		}
 		// iterator operator--(iterator);
 	};
