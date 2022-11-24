@@ -31,17 +31,17 @@ add_custom_target(
     DEPENDS ${PROJECT_NAME}_TEST
 )
 
-enable_testing()
+# enable_testing()
 
-find_package(GTest REQUIRED)
+# find_package(GTest REQUIRED)
 
 file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp")
 
 message("test sources is ${TEST_SOURCES}")
 
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
-target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} GTest::gtest GTest::gtest_main)
+target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME})
 target_compile_options(${PROJECT_NAME}_tests PRIVATE --coverage -g)
 target_link_options(${PROJECT_NAME}_tests PRIVATE --coverage)
 
-add_test(NAME do-some-test COMMAND ${PROJECT_NAME}_tests)
+# add_test(NAME do-some-test COMMAND ${PROJECT_NAME}_tests)
