@@ -190,7 +190,167 @@ class Set {
             }
         }
 
-        void erase();
+        void erase() {
+            this->s->_size--;
+
+            ListedRBTree *rep;
+
+            if (!this->right->is_leaf()) rep = this->next;
+            else if (!this->left->is_leaf()) rep = this->prev;
+            else rep = this->left;
+
+            this->replace(rep);
+        }
+
+        void replace(ListedRBTree *rep) {
+            ListedRBTree *n;
+
+            if (rep->is_leaf()) {
+                this->prev->next = this->next;
+                this->next->prev = this->prev;
+
+                n = rep;
+                this->left = new ListedRBTree(this->s);
+
+                n->parent = this->parent;
+                if (this->parent == nullptr) this->s->_root = n;
+                else if (this == this->parent->left) this->parent->left = n;
+                else this->parent->right = n;
+
+                if (this->color == BLACK) n->dc1();
+
+                delete this;
+            } else {
+                rep->prev->next = rep->next;
+                rep->next->prev = rep->prev;
+
+                this->value = rep->value;
+                
+                if (!rep->left->is_leaf()) n = rep->left;
+                else if (!rep->right->is_leaf()) n = rep->right;
+                else n = new ListedRBTree(this->s);
+
+                n->parent = rep->parent;
+                if (rep == rep->parent->left) rep->parent->left = n;
+                else rep->parent->right = n;
+
+                if (rep->color == BLACK) {
+                    if (n->color == RED) {
+                        n->color = BLACK;
+                    } else {
+                        n->dc1();
+                    }
+                }
+
+                delete rep;
+            }
+        }
+
+        void dc1() {
+            if (this->parent == nullptr) return;
+            this->dc2();
+        }
+
+        void dc2() {
+            ListedRBTree *p = this->parent, *s;
+
+            if (this == p->left) s = p->right;
+            else s = p->left;
+
+            if (s->color == RED) {
+                p->color = RED;
+                s->color = BLACK;
+
+                if (this == p->left) p->rotate_left();
+                else p->rotate_right();
+            }
+            this->dc3();
+        }
+
+        void dc3() {
+            ListedRBTree *p = this->parent, *s;
+
+            if (this == p->left) s = p->right;
+            else s = p->left;
+
+            if (
+                p->color == BLACK &&
+                s->color == BLACK &&
+                s->left->color == BLACK &&
+                s->right->color == BLACK
+            ) {
+                    s->color = RED;
+                    this->dc1();
+            } else {
+                this->dc4();
+            }
+        }
+
+        void dc4() {
+            ListedRBTree *p = this->parent, *s;
+
+            if (this == p->left) s = p->right;
+            else s = p->left;
+
+            if (
+                p->color == RED &&
+                s->color == BLACK &&
+                s->left->color == BLACK &&
+                s->right->color == BLACK
+            ) {
+                s->color = RED;
+                p->color = BLACK;
+            } else {
+                this->dc5();
+            }
+        }
+
+        void dc5() {
+            ListedRBTree *p = this->parent, *s;
+
+            if (this == p->left) s = p->right;
+            else s = p->left;
+
+            if (s->color == BLACK) {
+                if (
+                    this == p->left &&
+                    s->right->color == BLACK &&
+                    s->left->color == RED
+                ) {
+                    s->color = RED;
+                    s->left->color = BLACK;
+                    s->rotate_right();
+                } else if (
+                    this == p->right &&
+                    s->left->color == BLACK &&
+                    s->right->color == RED
+                ) {
+                    s->color = RED;
+                    s->right->color = BLACK;
+                    s->rotate_left();
+                }
+            }
+
+            this->dc6();
+        }
+
+        void dc6() {
+            ListedRBTree *p = this->parent, *s;
+
+            if (this == p->left) s = p->right;
+            else s = p->left;
+
+            s->color = p->color;
+            p->color = BLACK;
+
+            if (this == p->left) {
+                s->right->color = BLACK;
+                p->rotate_left();
+            } else {
+                s->left->color = BLACK;
+                p->rotate_right();
+            }
+        }
 
         bool is_leaf() { return this->left == this->right; }
     };
@@ -301,21 +461,31 @@ class Set {
             return !(*this == other);
         }
 
+        T& operator*() {
+            return this->value->value;
+        }
+
+        T* operator->() {
+            return &(this->value->value);
+        }
+
+     protected:
+        ListedRBTree *value;
+        bool is_forward;
+    };
+
+    class const_iterator : public iterator {
+     public:
+        const_iterator() : iterator::iterator() {}
+        const_iterator(ListedRBTree *_value, bool _is_forward) : iterator::iterator(_value, _is_forward) {}
+
         const T& operator*() const {
             return this->value->value;
         }
 
-        T* operator->() const {
+        const T* operator->() const {
             return &(this->value->value);
         }
-
-        bool is_dummy() const {
-            return this->value == this->value->s->_pivot;
-        }
-
-     private:
-        ListedRBTree *value;
-        bool is_forward;
     };
 
     iterator begin() const {
@@ -326,12 +496,33 @@ class Set {
         return iterator{this->_pivot, true};
     }
 
+    const_iterator cbegin() const {
+        return const_iterator{this->_pivot->next, true};
+    }
+
+    const_iterator cend() const {
+        return const_iterator{this->_pivot, true};
+    }
+
     void insert(T elem) {
         ListedRBTree *n = new ListedRBTree(this, elem);
         this->_root->insert(n, this->_pivot);
     }
 
-    void erase(T elem) {}
+    void erase(T elem) {
+        if (this->empty()) return;
+
+        ListedRBTree *cur = this->_root;
+
+        while (!cur->is_leaf()) {
+            if (elem < cur->value) cur = cur->left;
+            else if (cur->value < elem) cur = cur->right;
+            else {
+                cur->erase();
+                break;
+            }
+        }
+    }
 
     size_t size() const {
         return this->_size;
@@ -368,16 +559,5 @@ class Set {
         }
         
         return iterator{bound, true};
-    }
-
-    void print() {
-        auto b = this->begin();
-        auto e = this->end();
-
-        while (b != e) {
-            std::cout << *b << ' ';
-            b++;
-        }
-        std::cout << std::endl;
     }
 };
