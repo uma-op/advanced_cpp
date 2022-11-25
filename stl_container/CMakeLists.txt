@@ -14,7 +14,7 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${INCLUDE_DIR} ${SOURCE_DIR
 
 add_custom_target(
     ${PROJECT_NAME}_TEST
-    COMMAND ctest -VV ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_tests
     DEPENDS ${PROJECT_NAME}_tests
 )
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iterator>
+#include <iostream>
 
 template<typename T>
 class Set {
@@ -12,19 +13,42 @@ class Set {
         ListedRBTree *parent, *left, *right, *prev, *next;
         Color color;
 
+        Set *s;
         T value;
 
-        ListedRBTree() : parent(nullptr), left(nullptr), right(nullptr), prev(nullptr), next(nullptr), color(Color::BLACK) {}
-        ListedRBTree(T value) : parent(nullptr), left(nullptr), right(nullptr), prev(nullptr), next(nullptr), color(Color::RED), value(value) {}
+        ListedRBTree(Set *_s) :
+            parent(nullptr),
+            left(nullptr),
+            right(nullptr),
+            prev(nullptr),
+            next(nullptr),
+            color(BLACK),
+            s(_s) {}
+
+        ListedRBTree(Set *_s, T _value) :
+            parent(nullptr),
+            left(nullptr),
+            right(nullptr),
+            prev(nullptr),
+            next(nullptr),
+            color(RED),
+            s(_s),
+            value(_value) {}
+
+        ~ListedRBTree() {
+            if (this->is_leaf()) return;
+            if (this->right->is_leaf()) delete this->right;
+            if (this->left->is_leaf()) delete this->left;
+        }
         
         void rotate_left() {
-            if (this->right.is_leaf()) return;
+            if (this->right->is_leaf()) return;
 
             ListedRBTree *p = this->right;
             p->parent = this->parent;
 
             if (p->parent == nullptr) {
-                Set::_root = p;
+                this->s->_root = p;
             } else if (this == this->parent->left) {
                 this->parent->left = p;
             } else {
@@ -39,12 +63,12 @@ class Set {
         }
 
         void rotate_right() {
-            if (this->left.is_leaf()) return;
+            if (this->left->is_leaf()) return;
 
             ListedRBTree *p = this->left;
 
             if (this->parent == nullptr) {
-                Set::_root = p;
+                this->s->_root = p;
             } else if (this == this->parent->left) {
                 this->parent->left = p;
             } else {
@@ -62,6 +86,8 @@ class Set {
 
         void insert(ListedRBTree *other, ListedRBTree *before) {
             if (this->is_leaf()) {
+                this->s->_size++;
+
                 ListedRBTree *after = before->next;
 
                 before->next = other;
@@ -71,7 +97,7 @@ class Set {
                 other->next = after;
 
                 if (this->parent == nullptr) {
-                    Set::_root = other;
+                    this->s->_root = other;
                 } else if (this == this->parent->left) {
                     this->parent->left = other;
                 } else {
@@ -80,33 +106,33 @@ class Set {
 
                 other->parent = this->parent;
 
-                other->left = new ListedRBTree();
+                other->left = new ListedRBTree(this->s);
                 other->left->parent = other;
 
-                other->right = new ListedRBTree();
+                other->right = new ListedRBTree(this->s);
                 other->right->parent = other;
 
                 delete this;
 
                 other->ic1();
 
-                return
+                return;
             }
 
             if (other->value < this->value) {
                 this->left->insert(other, before);
-            } else {
+            } else if (this->value < other->value) {
                 this->right->insert(other, this);
             }
         }
 
         void ic1() {
-            if (this->parent == nullptr) this->color = Color::BLACK;
+            if (this->parent == nullptr) this->color = BLACK;
             else this->ic2();
         }
 
         void ic2() {
-            if (this->parent->color == Color::BLACK) return
+            if (this->parent->color == BLACK) return;
             this->ic3();
         }
 
@@ -119,12 +145,12 @@ class Set {
             if (p == g->left) u = g->right;
             else u = g->left;
 
-            if (!u->is_leaf() && u->color == Color::RED) {
-                g->color = Color::RED;
-                p->color = Color::BLACK;
-                u->color = Color::BLACK;
+            if (u->color == RED) {
+                g->color = RED;
+                p->color = BLACK;
+                u->color = BLACK;
 
-                this->ic1();
+                g->ic1();
             } else {
                 this->ic4();
             }
@@ -154,8 +180,8 @@ class Set {
             p = this->parent;
             g = p->parent;
 
-            p->color = Color::BLACK;
-            g->color = Color::RED;
+            p->color = BLACK;
+            g->color = RED;
 
             if (p == g->left) {
                 g->rotate_right();
@@ -175,7 +201,7 @@ class Set {
     size_t _size;
 
  public:
-    Set() : _root(new ListedRBTree()), _pivot(new ListedRBTree()) {
+    Set() : _root(new ListedRBTree(this)), _pivot(new ListedRBTree(this)), _size(0) {
         this->_pivot->next = this->_pivot;
         this->_pivot->prev = this->_pivot;
     }
@@ -185,14 +211,64 @@ class Set {
         for (;begin != end; begin++) this->insert(*begin);
     }
 
-    Set(std::initializer_list<T> data);
-    Set(const Set& other);
-    ~Set();
+    Set(std::initializer_list<T> data) : Set() {
+        for (T elem : data) {
+            this->insert(elem);
+        }
+    }
 
-    Set& operator=(const Set& other);
+    Set(const Set& other) : Set() {
+        iterator b = other.begin();
+        iterator e = other.end();
+
+        while (b != e) {
+            this->insert(*b);
+            b++;
+        }
+    }
+
+    ~Set() {
+        ListedRBTree *b = this->_pivot->next, *t;
+        ListedRBTree *e = this->_pivot;
+        
+        while (b != e) {
+            t = b->next;
+            delete b;
+            b = t;
+        }
+
+        delete this->_pivot;
+    }
+
+    Set& operator=(const Set& other) {
+        if (this == &other) return *this;
+
+        this->~Set();
+
+        this->_root = new ListedRBTree(this);
+        this->_pivot = new ListedRBTree(this);
+
+        this->_pivot->next = this->_pivot;
+        this->_pivot->prev = this->_pivot;
+
+        this->_size = 0;
+
+        iterator b = other.begin();
+        iterator e = other.end();
+
+        while (b != e) {
+            this->insert(*b);
+            b++;
+        }
+
+        return *this;
+    }
 
     class iterator : std::iterator<std::bidirectional_iterator_tag, T> {
      public:
+        iterator() = default;
+        iterator(ListedRBTree *_value, bool _is_forward) : value(_value), is_forward(_is_forward) {}
+
         iterator operator++(int) {
             iterator it = *this;
             ++(*this);
@@ -200,7 +276,7 @@ class Set {
         }
 
         iterator& operator++() {
-            if (this->value != Set::_pivot || !this->is_forward) this->value = this->value->next;
+            if (this->value != this->value->s->_pivot || !this->is_forward) this->value = this->value->next;
             this->is_forward = true;
             return *this;
         }
@@ -212,25 +288,29 @@ class Set {
         }
 
         iterator& operator--() {
-            if (this->value != Set::_pivot || this->is_forward) this->value = this->value->prev;
+            if (this->value != this->value->s->_pivot || this->is_forward) this->value = this->value->prev;
             this->is_forward = false;
             return *this;
         }
 
-        bool operator==(const iterator &other) {
-            return *(*this) == *other;
+        bool operator==(const iterator &other) const {
+            return this->value == other.value;
         }
 
-        bool operator!=(const iterator &other) {
-            return *(*this) != *other;
+        bool operator!=(const iterator &other) const {
+            return !(*this == other);
         }
 
-        const T& operator*() {
+        const T& operator*() const {
             return this->value->value;
         }
 
-        T* operator->() {
+        T* operator->() const {
             return &(this->value->value);
+        }
+
+        bool is_dummy() const {
+            return this->value == this->value->s->_pivot;
         }
 
      private:
@@ -247,11 +327,11 @@ class Set {
     }
 
     void insert(T elem) {
-        ListedRBTree *n = ListedRBTree(elem);
+        ListedRBTree *n = new ListedRBTree(this, elem);
         this->_root->insert(n, this->_pivot);
     }
 
-    void erase(T elem);
+    void erase(T elem) {}
 
     size_t size() const {
         return this->_size;
@@ -266,7 +346,7 @@ class Set {
 
         while (!cur->is_leaf()) {
             if (elem < cur->value) cur = cur->left;
-            else if (cur->value < elem) = cur->right;
+            else if (cur->value < elem) cur = cur->right;
             else return iterator{cur, true};
         }
 
@@ -288,5 +368,16 @@ class Set {
         }
         
         return iterator{bound, true};
+    }
+
+    void print() {
+        auto b = this->begin();
+        auto e = this->end();
+
+        while (b != e) {
+            std::cout << *b << ' ';
+            b++;
+        }
+        std::cout << std::endl;
     }
 };
