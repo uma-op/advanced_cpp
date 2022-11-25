@@ -40,7 +40,7 @@ class Set {
             if (this->right->is_leaf()) delete this->right;
             if (this->left->is_leaf()) delete this->left;
         }
-        
+
         void rotate_left() {
             if (this->right->is_leaf()) return;
 
@@ -127,8 +127,11 @@ class Set {
         }
 
         void ic1() {
-            if (this->parent == nullptr) this->color = BLACK;
-            else this->ic2();
+            if (this->parent == nullptr) {
+                this->color = BLACK;
+            } else {
+                this->ic2();
+            }
         }
 
         void ic2() {
@@ -142,8 +145,11 @@ class Set {
             p = this->parent;
             g = p->parent;
 
-            if (p == g->left) u = g->right;
-            else u = g->left;
+            if (p == g->left) {
+                u = g->right;
+            } else {
+                u = g->left;
+            }
 
             if (u->color == RED) {
                 g->color = RED;
@@ -195,9 +201,13 @@ class Set {
 
             ListedRBTree *rep;
 
-            if (!this->right->is_leaf()) rep = this->next;
-            else if (!this->left->is_leaf()) rep = this->prev;
-            else rep = this->left;
+            if (!this->right->is_leaf()) {
+                rep = this->next;
+            } else if (!this->left->is_leaf()) {
+                rep = this->prev;
+            } else {
+                rep = this->left;
+            }
 
             this->replace(rep);
         }
@@ -213,9 +223,13 @@ class Set {
                 this->left = new ListedRBTree(this->s);
 
                 n->parent = this->parent;
-                if (this->parent == nullptr) this->s->_root = n;
-                else if (this == this->parent->left) this->parent->left = n;
-                else this->parent->right = n;
+                if (this->parent == nullptr) {
+                    this->s->_root = n;
+                } else if (this == this->parent->left) {
+                    this->parent->left = n;
+                } else {
+                    this->parent->right = n;
+                }
 
                 if (this->color == BLACK) n->dc1();
 
@@ -225,14 +239,21 @@ class Set {
                 rep->next->prev = rep->prev;
 
                 this->value = rep->value;
-                
-                if (!rep->left->is_leaf()) n = rep->left;
-                else if (!rep->right->is_leaf()) n = rep->right;
-                else n = new ListedRBTree(this->s);
+
+                if (!rep->left->is_leaf()) {
+                    n = rep->left;
+                } else if (!rep->right->is_leaf()) {
+                    n = rep->right;
+                } else {
+                    n = new ListedRBTree(this->s);
+                }
 
                 n->parent = rep->parent;
-                if (rep == rep->parent->left) rep->parent->left = n;
-                else rep->parent->right = n;
+                if (rep == rep->parent->left) {
+                    rep->parent->left = n;
+                } else {
+                    rep->parent->right = n;
+                }
 
                 if (rep->color == BLACK) {
                     if (n->color == RED) {
@@ -254,15 +275,21 @@ class Set {
         void dc2() {
             ListedRBTree *p = this->parent, *s;
 
-            if (this == p->left) s = p->right;
-            else s = p->left;
+            if (this == p->left) {
+                s = p->right;
+            } else {
+                s = p->left;
+            }
 
             if (s->color == RED) {
                 p->color = RED;
                 s->color = BLACK;
 
-                if (this == p->left) p->rotate_left();
-                else p->rotate_right();
+                if (this == p->left) {
+                    p->rotate_left();
+                } else {
+                    p->rotate_right();
+                }
             }
             this->dc3();
         }
@@ -270,8 +297,11 @@ class Set {
         void dc3() {
             ListedRBTree *p = this->parent, *s;
 
-            if (this == p->left) s = p->right;
-            else s = p->left;
+            if (this == p->left) {
+                s = p->right;
+            } else {
+                s = p->left;
+            }
 
             if (
                 p->color == BLACK &&
@@ -289,8 +319,11 @@ class Set {
         void dc4() {
             ListedRBTree *p = this->parent, *s;
 
-            if (this == p->left) s = p->right;
-            else s = p->left;
+            if (this == p->left) {
+                s = p->right;
+            } else {
+                s = p->left;
+            }
 
             if (
                 p->color == RED &&
@@ -308,8 +341,11 @@ class Set {
         void dc5() {
             ListedRBTree *p = this->parent, *s;
 
-            if (this == p->left) s = p->right;
-            else s = p->left;
+            if (this == p->left) {
+                s = p->right;
+            } else {
+                s = p->left;
+            }
 
             if (s->color == BLACK) {
                 if (
@@ -337,8 +373,11 @@ class Set {
         void dc6() {
             ListedRBTree *p = this->parent, *s;
 
-            if (this == p->left) s = p->right;
-            else s = p->left;
+            if (this == p->left) {
+                s = p->right;
+            } else {
+                s = p->left;
+            }
 
             s->color = p->color;
             p->color = BLACK;
@@ -368,7 +407,7 @@ class Set {
 
     template<typename InputIt>
     Set(InputIt begin, InputIt end) : Set() {
-        for (;begin != end; begin++) this->insert(*begin);
+        for (; begin != end; begin++) this->insert(*begin);
     }
 
     Set(std::initializer_list<T> data) : Set() {
@@ -390,7 +429,7 @@ class Set {
     ~Set() {
         ListedRBTree *b = this->_pivot->next, *t;
         ListedRBTree *e = this->_pivot;
-        
+
         while (b != e) {
             t = b->next;
             delete b;
@@ -515,9 +554,11 @@ class Set {
         ListedRBTree *cur = this->_root;
 
         while (!cur->is_leaf()) {
-            if (elem < cur->value) cur = cur->left;
-            else if (cur->value < elem) cur = cur->right;
-            else {
+            if (elem < cur->value) {
+                cur = cur->left;
+            } else if (cur->value < elem) {
+                cur = cur->right;
+            } else {
                 cur->erase();
                 break;
             }
@@ -536,9 +577,13 @@ class Set {
         ListedRBTree *cur = this->_root;
 
         while (!cur->is_leaf()) {
-            if (elem < cur->value) cur = cur->left;
-            else if (cur->value < elem) cur = cur->right;
-            else return iterator{cur, true};
+            if (elem < cur->value) {
+                cur = cur->left;
+            } else if (cur->value < elem) {
+                cur = cur->right;
+            } else {
+                return iterator{cur, true};
+            }
         }
 
         return this->end();
@@ -557,7 +602,7 @@ class Set {
                 return iterator{cur, true};
             }
         }
-        
+
         return iterator{bound, true};
     }
 };

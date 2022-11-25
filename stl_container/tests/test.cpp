@@ -18,7 +18,7 @@ void print(Set<int> *s) {
 void fail(const char *message) {
     std::cerr << "Fail:\n";
     std::cerr << message << "\n";
-    std::cout << "-1 bad output\n"; // to get WA
+    std::cout << "-1 bad output\n";  // to get WA
     exit(0);
 }
 
@@ -237,7 +237,7 @@ void run_all() {
     check_copy_correctness();
     check_destructor();
 }
-}
+}  // namespace internal_tests
 
 
 int main() {
