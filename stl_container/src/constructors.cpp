@@ -45,3 +45,28 @@ Set<T>::~Set() {
 
     delete this->_pivot;
 }
+
+template<typename T>
+Set<T>& Set<T>::operator=(const Set& other) {
+    if (this == &other) return *this;
+
+    this->~Set();
+
+    this->_root = new ListedRBTree(this);
+    this->_pivot = new ListedRBTree(this);
+
+    this->_pivot->next = this->_pivot;
+    this->_pivot->prev = this->_pivot;
+
+    this->_size = 0;
+
+    iterator b = other.begin();
+    iterator e = other.end();
+
+    while (b != e) {
+        this->insert(*b);
+        b++;
+    }
+
+    return *this;
+}

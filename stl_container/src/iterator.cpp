@@ -14,7 +14,10 @@ typename Set<T>::iterator Set<T>::iterator::operator++(int) {
 
 template<typename T>
 typename Set<T>::iterator& Set<T>::iterator::operator++() {
-    if (this->value != this->value->s->_pivot || !this->is_forward) this->value = this->value->next;
+    if (this->value != this->value->s->_pivot || !this->is_forward) {
+        this->value = this->value->next;
+    }
+
     this->is_forward = true;
     return *this;
 }
@@ -28,7 +31,10 @@ typename Set<T>::iterator Set<T>::iterator::operator--(int) {
 
 template<typename T>
 typename Set<T>::iterator& Set<T>::iterator::operator--() {
-    if (this->value != this->value->s->_pivot || this->is_forward) this->value = this->value->prev;
+    if (this->value != this->value->s->_pivot || this->is_forward) {
+        this->value = this->value->prev;
+    }
+
     this->is_forward = false;
     return *this;
 }
@@ -44,27 +50,11 @@ bool Set<T>::iterator::operator!=(const iterator &other) const {
 }
 
 template<typename T>
-T& Set<T>::iterator::operator*() {
+const T& Set<T>::iterator::operator*() const {
     return this->value->value;
 }
 
 template<typename T>
-T* Set<T>::iterator::operator->() {
-    return &(this->value->value);
-}
-
-template<typename T>
-Set<T>::const_iterator::const_iterator() : iterator::iterator() {}
-
-template<typename T>
-Set<T>::const_iterator::const_iterator(ListedRBTree *_value, bool fw) : iterator::iterator(_value, fw) {}
-
-template<typename T>
-const T& Set<T>::const_iterator::operator*() const {
-    return this->value->value;
-}
-
-template<typename T>
-const T* Set<T>::const_iterator::operator->() const {
+const T* Set<T>::iterator::operator->() const {
     return &(this->value->value);
 }

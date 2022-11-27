@@ -7,6 +7,24 @@ template<typename T>
 class Set {
  private:
     class ListedRBTree {
+        void rotate_left();
+        void rotate_right();
+
+        void ic1();
+        void ic2();
+        void ic3();
+        void ic4();
+        void ic5();
+
+        void dc1();
+        void dc2();
+        void dc3();
+        void dc4();
+        void dc5();
+        void dc6();
+
+        void replace(ListedRBTree *rep);
+
      public:
         enum Color { RED, BLACK };
 
@@ -20,27 +38,8 @@ class Set {
         ListedRBTree(Set *_s, T _value);
         ~ListedRBTree();
 
-        void rotate_left();
-        void rotate_right();
-
         void insert(ListedRBTree *other, ListedRBTree *before);
-
-        void ic1();
-        void ic2();
-        void ic3();
-        void ic4();
-        void ic5();
-
         void erase();
-
-        void replace(ListedRBTree *rep);
-
-        void dc1();
-        void dc2();
-        void dc3();
-        void dc4();
-        void dc5();
-        void dc6();
 
         bool is_leaf();
     };
@@ -61,31 +60,9 @@ class Set {
 
     ~Set();
 
-    Set& operator=(const Set& other) {
-        if (this == &other) return *this;
+    Set& operator=(const Set& other);
 
-        this->~Set();
-
-        this->_root = new ListedRBTree(this);
-        this->_pivot = new ListedRBTree(this);
-
-        this->_pivot->next = this->_pivot;
-        this->_pivot->prev = this->_pivot;
-
-        this->_size = 0;
-
-        iterator b = other.begin();
-        iterator e = other.end();
-
-        while (b != e) {
-            this->insert(*b);
-            b++;
-        }
-
-        return *this;
-    }
-
-    class iterator : std::iterator<std::bidirectional_iterator_tag, T> {
+    class iterator {
      public:
         iterator() = default;
         iterator(ListedRBTree *_value, bool _is_forward);
@@ -98,22 +75,15 @@ class Set {
         bool operator==(const iterator &other) const;
         bool operator!=(const iterator &other) const;
 
-        T& operator*();
-        T* operator->();
+        const T& operator*() const;
+        const T* operator->() const;
 
      protected:
         ListedRBTree *value;
         bool is_forward;
     };
 
-    class const_iterator : public iterator {
-     public:
-        const_iterator();
-        const_iterator(ListedRBTree *_value, bool _is_forward);
-
-        const T& operator*() const;
-        const T* operator->() const;
-    };
+    using const_iterator = iterator;
 
     iterator begin() const;
     iterator end() const;
