@@ -2,21 +2,21 @@ name: CI
 on:
   push:
     branches:
-      matrix-calculator
+      stl-container
 jobs:
   Lint:
     runs-on: ubuntu-latest
-    container: t1d333/cpp-app
+    container: geogreck/cpp-container
     steps:
       - uses: actions/checkout@v3
       - name: Lint
         run: |
           cmake -S . -B build
-          cmake --build build --target matrix_calculator_LINT
+          cmake --build build --target stl_container_LINT
 
   Build:
     runs-on: ubuntu-latest
-    container: t1d333/cpp-app
+    container: geogreck/cpp-container
     needs: [Lint]
     steps:
       - uses: actions/checkout@v3
@@ -27,11 +27,11 @@ jobs:
 
   Test:
     runs-on: ubuntu-latest
-    container: t1d333/cpp-app
+    container: geogreck/cpp-container
     needs: [Lint, Build]
     steps:
       - uses: actions/checkout@v3
       - name: Test
         run: |
           cmake -S . -B build
-          cmake --build build --target matrix_calculator_TEST
+          cmake --build build --target stl_container_TEST
